@@ -28,6 +28,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import id.kalen3r.R
+import id.kalen3r.ui.cari.CariScreen
 import id.kalen3r.ui.detail.DetailScreen
 import id.kalen3r.ui.month.MonthScreen
 
@@ -96,7 +97,7 @@ fun AppNav() {
                     onRemind = { nav.navigate(AppRoutes.ALARM) },
                 )
             }
-            composable(AppRoutes.CARI) { Placeholder(R.string.placeholder_cari) }
+            composable(AppRoutes.CARI) { CariScreen { nav.navigate(AppRoutes.detail(it.toString())) } }
             composable(AppRoutes.ALARM) { Placeholder(R.string.placeholder_alarm) }
             composable(AppRoutes.DONASI) { Placeholder(R.string.placeholder_donasi) }
         }
