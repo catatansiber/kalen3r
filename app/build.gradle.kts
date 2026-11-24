@@ -13,12 +13,40 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
+    }
+
+    // Release signing is optional. Set these four values (Gradle property -P... or environment
+    // variable) to get a signed release APK. If any is missing, assembleRelease still works and
+    // produces an UNSIGNED apk. Never commit a keystore or these values.
+    fun signingValue(name: String): String? =
+        (providers.gradleProperty(name).orNull ?: providers.environmentVariable(name).orNull)
+            ?.takeIf { it.isNotBlank() }
+
+    val releaseKeystore = signingValue("KALEN3R_KEYSTORE")
+    val releaseStorePassword = signingValue("KALEN3R_KEYSTORE_PASSWORD")
+    val releaseKeyAlias = signingValue("KALEN3R_KEY_ALIAS")
+    val releaseKeyPassword = signingValue("KALEN3R_KEY_PASSWORD") ?: releaseStorePassword
+    val hasReleaseSigning =
+        releaseKeystore != null && releaseStorePassword != null && releaseKeyAlias != null
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(releaseKeystore!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
     }
 
     buildTypes {
         release {
+            // R8/shrinking stays OFF for v1: the app looks up resources by name at runtime
+            // (qris_donasi, tri_sandya) and was never tested with shrinking on a device.
             isMinifyEnabled = false
+            if (hasReleaseSigning) signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
