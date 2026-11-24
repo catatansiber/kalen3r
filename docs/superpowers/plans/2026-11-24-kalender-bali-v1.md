@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ad-free Android Kalender Bali app (calendar, Otonan, Odalan, Tri Sandya/Rainan alarms, Play Billing donations) on a tested pure-Kotlin calendar engine.
+**Goal:** Ad-free Android Kalender Bali app (calendar, Otonan, Odalan, Tri Sandya/Rainan alarms, QRIS donation screen) on a tested pure-Kotlin calendar engine.
 
-**Architecture:** Gradle multi-module: `:calendar-core` (pure Kotlin/JVM, `java.time` only) holds all calendar logic, validated against golden data; `:app` (Compose, AlarmManager, Play Billing) only renders and schedules. Pawukon is exact arithmetic; lunar data is computed astronomically then fixed by a generated `corrections.json`.
+**Architecture:** Gradle multi-module: `:calendar-core` (pure Kotlin/JVM, `java.time` only) holds all calendar logic, validated against golden data; `:app` (Compose, AlarmManager, QRIS donation screen) only renders and schedules. Pawukon is exact arithmetic; lunar data is computed astronomically then fixed by a generated `corrections.json`.
 
-**Tech Stack:** Kotlin, Gradle (Kotlin DSL), JUnit 5, Jetpack Compose, DataStore, AlarmManager, Google Play Billing, Node + Playwright (golden-data scripts only).
+**Tech Stack:** Kotlin, Gradle (Kotlin DSL), JUnit 5, Jetpack Compose, DataStore, AlarmManager, FileProvider, Node + Playwright (golden-data scripts only).
 
 **Spec:** `docs/superpowers/specs/2026-11-24-kalender-bali-design.md`
 
@@ -15,13 +15,13 @@
 - Package: `id.kalen3r` (placeholder until owner picks; one constant to change). minSdk 26.
 - `:calendar-core` imports only the Kotlin stdlib and `java.time`. No Android, no network.
 - All user-visible text is Indonesian, stored in string resources.
-- No ads, no analytics, no tracking, no network calls other than Play Billing.
+- No ads, no analytics, no tracking, no network calls at all, no Play Billing library.
 - Theme: teal `#0F5257`, gold `#E0A21B`, cream `#FBF6EC`, ink `#2B2118`. Touch targets ≥ 44dp. Mockup: https://claude.ai/artifact/EbjKwUZKj9UK357VZhcv1H
 - Pawukon anchor: 2026-11-01 = index 0 = Wuku Sinta, Redite, Paing. Cycle 210 days. Pasaran order Paing, Pon, Wage, Kliwon, Umanis. Triwara Pasah, Beteng, Kajeng.
 - Çaka year = Gregorian − 78 after Nyepi, − 79 before. Time zone WITA (UTC+8).
 - Golden range 2024–2035. Outside it: `verified = false` and UI warning. Pawukon tolerance is zero.
 - Do not copy text, tables, icons or names from other apps or sites. Golden data stores date facts only.
-- Donation product IDs fixed: `donasi_10k`, `donasi_25k`, `donasi_50k`, `donasi_100k` (one-time, consumable).
+- Donation: static QRIS image supplied by the owner at `app/src/main/res/drawable-nodpi/qris_donasi.png` (placeholder text if absent). No Play Billing. App is distributed as a signed APK from the owner's website, not Play Store.
 - Alarm permission: `USE_EXACT_ALARM`, fallback `SCHEDULE_EXACT_ALARM`. Rolling window 60 days.
 - Tri Sandya default times 06:00, 12:00, 18:00. Sound file `app/src/main/res/raw/tri_sandya.mp3` is supplied by the owner later; default notification sound until then.
 
@@ -32,7 +32,7 @@
 - Days with ngunalatri (skipped tithi) or nampih (repeated tithi): month grid shows one tithi label per day, never blank or duplicated wrongly.
 - Device time zone not WITA: calendar dates still follow WITA (pure `LocalDate`), alarms fire at local clock time chosen by user.
 - Device reboot, app update, or user clearing recent apps: alarms are rescheduled and nothing fires twice.
-- Billing unavailable (no Play Services, offline): Donasi screen shows a clear message, rest of app unaffected.
+- QRIS image missing or share target unavailable: Donasi screen shows a clear fallback message, rest of app unaffected.
 - Invalid search input (pancawara that does not match wuku+saptawara, birth date before 1900): clear error, no crash.
 
 ---
@@ -229,25 +229,26 @@
 - [ ] **Step 4:** Add sound choice setting: "Suara Tri Sandya" if `R.raw.tri_sandya` exists else default tone; the Tri Sandya option is hidden until the file exists.
 - [ ] **Step 5:** Commit `feat: alarms and help`. Owner device test required before release.
 
-### Task 14: Donasi (Play Billing)
+### Task 14: Donasi (QRIS)
 
 **Files:**
-- Create: `app/src/main/kotlin/id/kalen3r/billing/DonationBilling.kt`, `ui/donasi/DonasiScreen.kt`, tests.
+- Create: `app/src/main/kotlin/id/kalen3r/ui/donasi/DonasiScreen.kt`, `DonasiViewModel.kt`, `app/src/main/res/xml/file_paths.xml`, tests.
+- Modify: `AndroidManifest.xml` (FileProvider).
 
 **Interfaces:**
-- Produces: `interface DonationBilling { suspend fun products(): List<DonationProduct>; suspend fun donate(activity: Activity, productId: String): DonationResult }`; `sealed interface DonationResult { Success, Cancelled, Unavailable, Error }`. A `FakeDonationBilling` for tests and previews.
+- Produces: `interface QrisSource { fun hasImage(): Boolean; fun shareIntent(context: Context): Intent? }`; `DonasiViewModel(source: QrisSource)` with `state: StateFlow<DonasiUiState>` (`HasQr`, `Missing`). `FakeQrisSource` for tests.
 
-- [ ] **Step 1:** Tests with the fake: `unavailableShowsMessageAndHidesButtons`, `successShowsThanks`, `purchaseIsConsumedSoItCanRepeat`, `cancelledShowsNothing`. Expected FAIL.
-- [ ] **Step 2:** Implement with Play Billing Library (one-time products, consume after purchase). Screen per mockup; copy states donations are voluntary and all features stay open.
-- [ ] **Step 3:** Run tests. Expected PASS.
-- [ ] **Step 4:** Commit `feat: donations`. Real purchases can only be tested after upload to Play Console internal track.
+- [ ] **Step 1:** Tests on the ViewModel with the fake: `showsQrWhenImagePresent`, `showsFallbackWhenImageMissing`, `shareIntentIsNullWhenMissing`. Expected FAIL.
+- [ ] **Step 2:** Implement the screen per mockup, adapted: thank-you text, QRIS image, recipient name (string resource), scan instructions in Indonesian, "Bagikan gambar QR" button via FileProvider. Copy states donations are voluntary and all features stay open. Remove the four amount buttons and the "Google Play" wording.
+- [ ] **Step 3:** Run tests. Expected PASS (or owner builds).
+- [ ] **Step 4:** Commit `feat: qris donation screen`.
 
 ### Task 15: Release prep and owner handoff
 
 **Files:**
 - Create/Modify: `README.md`, `docs/OWNER-CHECKLIST.md`, `app/src/main/res/` icons (own design), privacy text.
 
-- [ ] **Step 1:** Write `OWNER-CHECKLIST.md`: pick package name, create Play Console app, add 4 donation products, upload `tri_sandya.mp3`, sign and upload to internal track, test alarms on a Xiaomi/Oppo phone, update golden data each year before December (`scripts/golden/README.md`).
+- [ ] **Step 1:** Write `OWNER-CHECKLIST.md`: pick package name, provide `qris_donasi.png` and recipient name, upload `tri_sandya.mp3`, create a signing key and build the signed APK, host the APK on the website (explain "instal dari sumber tidak dikenal" to users), test alarms on a Xiaomi/Oppo phone, update golden data each year before December (`scripts/golden/README.md`).
 - [ ] **Step 2:** Run the whole suite: `gradle :calendar-core:test` (and `:app:test` if SDK). Expected: PASS.
 - [ ] **Step 3:** Grep the repo for banned items (ads SDKs, analytics, other apps' names or text): `grep -ri 'admob\|firebase\|analytics' .`. Expected: no hits.
 - [ ] **Step 4:** Commit `docs: owner checklist and release notes`.

@@ -8,7 +8,8 @@ Pemilik ingin aplikasi Android kalender Bali dengan fitur yang sama seperti
 aplikasi "Kalender Bali" (com.alitmd.kalenderbali) di Play Store, tetapi:
 
 - **tanpa iklan**, dan
-- **ada fitur donasi** lewat Google Play Billing.
+- **ada fitur donasi** lewat **QRIS** (perubahan 2026-11-24: aplikasi dibagikan
+  lewat website pemilik, bukan Play Store).
 
 Pengguna: umat Hindu Bali yang memakai kalender untuk hari raya, Otonan,
 Odalan, dan pengingat sembahyang. Aplikasi asli punya masalah alarm mati di
@@ -29,7 +30,8 @@ m.kalenderbali.org memblokir akses otomatis dan tidak dipakai.
    Sasih** (sasih + Purnama/Tilem/tanggal penanggal-pangelong).
 4. **Alarm dan notifikasi**: Rainan terpilih dan Tri Sandya (06:00, 12:00,
    18:00, jam bisa diubah), andal walau layar mati dan HP di-reboot.
-5. **Donasi** lewat Google Play Billing: beberapa nominal sekali bayar.
+5. **Donasi** lewat **QRIS**: layar menampilkan kode QRIS pemilik; pengguna
+   memindainya dari aplikasi e-wallet/m-banking dan mengisi nominal sendiri.
 6. Berjalan **offline penuh**. Bahasa Indonesia.
 
 ## Bukan tujuan (versi 1)
@@ -49,8 +51,12 @@ m.kalenderbali.org memblokir akses otomatis dan tidak dipakai.
 
 - Platform: Android, Kotlin, minSdk 26. Alasan: alarm dan notifikasi paling
   andal di native. (Pilihan pemilik.)
-- Donasi: Google Play Billing. Hanya bisa diuji penuh setelah aplikasi ada di
-  Play Console (track internal). Itu dikerjakan pemilik.
+- Donasi: QRIS statis. Gambar QRIS disediakan pemilik (berkas
+  `app/src/main/res/drawable-nodpi/qris_donasi.png`), seperti mp3 Tri Sandya.
+  Tanpa Play Billing, tanpa jaringan, tanpa data pembayaran di aplikasi.
+- Distribusi: APK ditandatangani, diunggah ke website pemilik (bukan Play
+  Store). Tidak ada pembaruan otomatis; pengguna mengunduh APK baru. Pengguna
+  perlu mengizinkan "instal dari sumber tidak dikenal".
 - Hak cipta: rumus ditulis sendiri; data tes hanya berupa fakta tanggal.
 - Sandbox kerja ini punya Java dan Gradle tetapi belum tentu Android SDK.
   Karena itu mesin kalender dipisah sebagai modul Kotlin/JVM murni yang bisa
@@ -60,7 +66,7 @@ m.kalenderbali.org memblokir akses otomatis dan tidak dipakai.
 
 | | Untung | Rugi |
 |---|---|---|
-| **A. Kotlin native (dipilih pemilik)** | Alarm andal, ukuran kecil, Billing resmi | Hanya Android |
+| **A. Kotlin native (dipilih pemilik)** | Alarm andal, ukuran kecil | Hanya Android |
 | B. Flutter | Bisa iOS | Alarm background lebih rewel |
 | C. PWA | Cepat | Alarm tidak andal; gagal di fitur inti |
 
@@ -77,13 +83,14 @@ astronomis (fase bulan, waktu WITA) lalu dicek dengan tanggal resmi;
 - UI: Jetpack Compose, satu Activity, tema sendiri (bukan warna/ikon
   aplikasi lain).
 - Struktur: modul `:calendar-core` (Kotlin/JVM, tanpa Android) + modul
-  `:app` (UI, alarm, billing).
+  `:app` (UI, alarm, donasi QRIS).
 - Alarm: `AlarmManager.setExactAndAllowWhileIdle`, jadwal ulang saat
   `BOOT_COMPLETED`, izin exact alarm, dan layar bantuan "Agar alarm tidak
   mati" per merek HP (teks ditulis sendiri).
 - Penyimpanan: DataStore untuk pengaturan; tidak perlu database.
-- Donasi: produk sekali bayar (konsumsi) `donasi_10k`, `donasi_25k`,
-  `donasi_50k`, `donasi_100k`; tombol "terima kasih" setelah berhasil.
+- Donasi: layar QRIS (gambar QR, nama penerima, petunjuk scan, tombol
+  "Bagikan gambar QR" lewat FileProvider). Nominal diisi pengguna di aplikasi
+  pembayarannya. Jika gambar QRIS belum ada, tampil teks "QRIS segera hadir".
 - Tes: tes unit pada `:calendar-core` dengan data emas.
 
 ## Keputusan tambahan dari builder check (pilihan builder)
@@ -101,7 +108,7 @@ astronomis (fase bulan, waktu WITA) lalu dicek dengan tanggal resmi;
 - Android SDK: builder coba pasang di sandbox. Jika gagal, kode ditulis dan
   modul `:calendar-core` dites penuh; build `:app` dan uji HP oleh pemilik.
 - Izin alarm: `USE_EXACT_ALARM` (aplikasi kalender), cadangan
-  `SCHEDULE_EXACT_ALARM`. ID produk donasi tetap; harga bisa diubah di Play Console.
+  `SCHEDULE_EXACT_ALARM`. (Di luar Play Store kebijakan izin Play tidak berlaku.)
 - Bahasa: Indonesia saja, string disimpan di resource agar mudah ditambah.
 
 ## Tampilan (disetujui pemilik)
@@ -229,4 +236,4 @@ selain yang disebut, nominal donasi akhir, format ekspor/bagikan.
 Sudah dijawab pemilik: kalenderbali.com boleh dipakai untuk fakta tanggal;
 pakai tabel koreksi; tampilan disetujui; mp3 Tri Sandya menyusul.
 
-Masih terbuka (tidak menghalangi): nama paket dan akun Play Console.
+Masih terbuka (tidak menghalangi): nama paket, penerima QRIS, dan berkas gambar QRIS dari pemilik.
