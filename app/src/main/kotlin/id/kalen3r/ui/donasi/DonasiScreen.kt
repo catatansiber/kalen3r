@@ -27,6 +27,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,10 +62,11 @@ fun DonasiScreen() {
         factory = viewModelFactory { initializer { DonasiViewModel(ResourceQrisSource(appContext)) } },
     )
     val state by vm.state.collectAsState()
+    val scope = rememberCoroutineScope()
 
     Column(Modifier.fillMaxSize().background(KalenColors.Cream)) {
         Row(Modifier.fillMaxWidth().background(KalenColors.Teal).padding(horizontal = 16.dp, vertical = 14.dp)) {
-            Text(stringResource(R.string.donasi_title), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.donasi_title), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold, modifier = Modifier.semantics { heading() })
         }
         Column(
             Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 16.dp),
@@ -73,16 +80,19 @@ fun DonasiScreen() {
                     QrCard()
                     val noApp = stringResource(R.string.donasi_share_unavailable)
                     val chooserTitle = stringResource(R.string.donasi_share_chooser)
+                    val failed = stringResource(R.string.donasi_share_failed)
                     Button(
                         onClick = {
-                            val intent = vm.shareIntent(context)
-                            if (intent == null) {
-                                vm.refresh()
-                            } else {
-                                try {
-                                    context.startActivity(Intent.createChooser(intent, chooserTitle))
-                                } catch (e: ActivityNotFoundException) {
-                                    Toast.makeText(context, noApp, Toast.LENGTH_SHORT).show()
+                            scope.launch {
+                                val intent = withContext(Dispatchers.IO) { vm.shareIntent(context) }
+                                if (intent == null) {
+                                    Toast.makeText(context, failed, Toast.LENGTH_SHORT).show()
+                                } else {
+                                    try {
+                                        context.startActivity(Intent.createChooser(intent, chooserTitle))
+                                    } catch (e: ActivityNotFoundException) {
+                                        Toast.makeText(context, noApp, Toast.LENGTH_SHORT).show()
+                                    }
                                 }
                             }
                         },

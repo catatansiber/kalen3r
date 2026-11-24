@@ -23,12 +23,30 @@ class DonasiViewModelTest {
         assertEquals(DonasiUiState.Missing, DonasiViewModel(FakeQrisSource(false)).state.value)
     }
 
+    private val uri = Any()
+    private fun planner(id: Int, copier: QrisCopier = QrisCopier { _, d -> File(d, "x.png") }) =
+        QrisSharePlanner({ id }, copier, { uri })
+
     @Test fun shareIntentIsNullWhenMissing() {
-        // Fake never builds an Intent (android.jar is stubbed on the JVM); the real source's
-        // decision is the pure helper below.
-        assertNull(FakeQrisSource(false).shareIntent(unusedContext()))
-        assertFalse(QrisResolution.isAvailable(0))
-        assertTrue(QrisResolution.isAvailable(0x7f080001))
+        val p = planner(0)
+        assertFalse(p.hasImage())
+        assertNull(p.plan(File("cache")))
+    }
+
+    @Test fun shareDecisionWhenPresent() {
+        val p = planner(0x7f080001)
+        assertTrue(p.hasImage())
+        val d = p.plan(File("cache"))!!
+        assertEquals(Intent.ACTION_SEND, d.action)
+        assertEquals("image/png", d.mimeType)
+        assertTrue(d.uri === uri)
+        assertEquals(Intent.FLAG_GRANT_READ_URI_PERMISSION, d.flags)
+        assertEquals(0, d.flags and Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+    }
+
+    @Test fun copyFailureYieldsNullNotCrash() {
+        val p = planner(0x7f080001) { _, _ -> throw java.io.IOException("disk full") }
+        assertNull(p.plan(File("cache")))
     }
 
     @Test fun donasiStateDoesNotChangeAfterRefresh() {
@@ -53,12 +71,4 @@ class DonasiViewModelTest {
         assertTrue(xml.contains("path=\"qris/\""))
         assertFalse(xml.contains("<files-path") || xml.contains("<external"))
     }
-}
-
-/** A Context instance that is never used (android.jar is stubbed on the JVM, so no constructor call). */
-private fun unusedContext(): Context {
-    val unsafeClass = Class.forName("sun.misc.Unsafe")
-    val unsafe = unsafeClass.getDeclaredField("theUnsafe").apply { isAccessible = true }.get(null)
-    return unsafeClass.getMethod("allocateInstance", Class::class.java)
-        .invoke(unsafe, android.content.ContextWrapper::class.java) as Context
 }

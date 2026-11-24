@@ -153,6 +153,7 @@
     <string name="donasi_share">Bagikan gambar QR</string>
     <string name="donasi_share_chooser">Bagikan gambar QR</string>
     <string name="donasi_share_unavailable">Tidak ada aplikasi untuk berbagi</string>
+    <string name="donasi_share_failed">Tidak bisa menyiapkan gambar QR</string>
     <string name="donasi_missing_title">QRIS segera hadir</string>
     <string name="donasi_missing_body">Terima kasih atas niatmu.</string>
     <string name="donasi_footer">Donasi tidak mengubah fitur apa pun. Kami tidak menyimpan data pembayaran.</string>

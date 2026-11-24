@@ -3,9 +3,12 @@ package id.kalen3r.ui.donasi
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,31 +28,73 @@ object QrisResolution {
     fun isAvailable(resId: Int) = resId != 0
 }
 
-/** Looks the drawable up at runtime so the build succeeds before the owner adds the PNG. */
-class ResourceQrisSource(private val context: Context) : QrisSource {
-    private fun resId() =
-        context.resources.getIdentifier(QrisResolution.DRAWABLE_NAME, "drawable", context.packageName)
+/** Pure description of the share Intent so the decision logic is JVM-testable. */
+data class ShareDecision(
+    val action: String,
+    val mimeType: String,
+    val uri: Any,
+    val flags: Int,
+)
 
-    override fun hasImage() = QrisResolution.isAvailable(resId())
+fun interface QrisCopier {
+    /** Copies the drawable [resId] into [cacheDir]/qris and returns the final file. May throw IOException. */
+    fun copy(resId: Int, cacheDir: File): File
+}
 
-    override fun shareIntent(context: Context): Intent? {
-        val id = resId()
+/** Pure planner: resource lookup, copy and Uri creation are injected. */
+class QrisSharePlanner(
+    private val lookup: (String) -> Int,
+    private val copier: QrisCopier,
+    private val uriFor: (File) -> Any,
+) {
+    fun hasImage() = QrisResolution.isAvailable(lookup(QrisResolution.DRAWABLE_NAME))
+
+    fun plan(cacheDir: File): ShareDecision? {
+        val id = lookup(QrisResolution.DRAWABLE_NAME)
         if (!QrisResolution.isAvailable(id)) return null
         return try {
-            val dir = File(context.cacheDir, QrisResolution.CACHE_DIR).apply { mkdirs() }
-            val file = File(dir, QrisResolution.CACHE_FILE)
-            context.resources.openRawResource(id).use { input ->
-                file.outputStream().use { input.copyTo(it) }
-            }
-            val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-            Intent(Intent.ACTION_SEND).apply {
-                type = "image/png"
-                putExtra(Intent.EXTRA_STREAM, uri)
-                clipData = ClipData.newRawUri(null, uri)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
+            val file = copier.copy(id, cacheDir)
+            ShareDecision(
+                action = Intent.ACTION_SEND,
+                mimeType = "image/png",
+                uri = uriFor(file),
+                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION,
+            )
         } catch (e: Exception) {
             null
+        }
+    }
+}
+
+/** Real source: looks the drawable up at runtime so the build succeeds before the owner adds the PNG. */
+class ResourceQrisSource(private val appContext: Context) : QrisSource {
+    private val planner = QrisSharePlanner(
+        lookup = { name -> appContext.resources.getIdentifier(name, "drawable", appContext.packageName) },
+        copier = { id, cacheDir ->
+            val dir = File(cacheDir, QrisResolution.CACHE_DIR).apply { mkdirs() }
+            val tmp = File.createTempFile("qris", ".tmp", dir)
+            try {
+                appContext.resources.openRawResource(id).use { input -> tmp.outputStream().use { input.copyTo(it) } }
+                val target = File(dir, QrisResolution.CACHE_FILE)
+                Files.move(tmp.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
+                target
+            } finally {
+                tmp.delete()
+            }
+        },
+        uriFor = { file -> FileProvider.getUriForFile(appContext, "${appContext.packageName}.fileprovider", file) },
+    )
+
+    override fun hasImage() = planner.hasImage()
+
+    override fun shareIntent(context: Context): Intent? {
+        val d = planner.plan(context.cacheDir) ?: return null
+        val uri = d.uri as Uri
+        return Intent(d.action).apply {
+            type = d.mimeType
+            putExtra(Intent.EXTRA_STREAM, uri)
+            clipData = ClipData.newRawUri(null, uri)
+            addFlags(d.flags)
         }
     }
 }
