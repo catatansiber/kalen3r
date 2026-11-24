@@ -47,8 +47,9 @@ data class Tithi(val type: TithiType, val number: Int) {
  * - [TithiRule.MEAN_ELONGATION] (Task 5): floor(D / 12 deg) + 1 with D the MEAN elongation (Meeus 47.2)
  *   at [TITHI_REFERENCE] WITA. D advances 12.19 deg/day, so it skips a tithi every ~62.9 days.
  * Both rules match all 212 golden days. They drift apart outside the golden ranges (5 days in 2025 growing
- * to 36 in 2035) and the one published fact found that separates them (Tilem 2025-05-27) agrees with the
- * pengalantaka; see calendar-core/docs/lunar-report.md. With the true elongation the best reference hour
+ * to 36 in 2035). The only fact found that separates them, Tilem 2025-05-27, agrees with the pengalantaka,
+ * but it comes from a web search summary whose page could not be fetched in full (low-to-medium
+ * confidence); see calendar-core/docs/lunar-report.md. With the true elongation the best reference hour
  * still mismatched 55 of the 212 golden days. Remaining differences from the official calendar are the
  * correction table's job (Task 7).
  */
@@ -69,9 +70,10 @@ object Lunar {
     /**
      * Pengalantaka pivot: 2000-01-18 is penanggal 12 (sasih Kapitu, Saka 1921), and a ngunalatri (one
      * tithi skipped) falls on every day whose distance from the pivot is 1 mod 63. Source:
-     * peradnya, balinese-date-js-lib, src/internal/Pivot.ts (PIVOT_2000) and src/BalineseDate.ts
-     * (_F_CALC_SASIH_DAY: dayTotal = sasihDay + dayDiff + ceil(dayDiff / 63)), "Pengalantaka Eka Sungsang
-     * ke Paing", used there from 2000-01-06. Earlier dates follow another pengalantaka (ke Pon) that is
+     * peradnya, balinese-date-js-lib (Apache-2.0; see THIRD_PARTY_NOTICES.md), src/internal/Pivot.ts
+     * (PIVOT_2000) and the day count dayTotal = sasihDay + dayDiff + ceil(dayDiff / 63) in src/BalineseDate.ts
+     * (_F_CALC_SASIH_DAY for the day number; the same count opens _F_CALC_SASIH_INFO, which also holds the
+     * nampih sasih rule used in Sasih.kt), "Pengalantaka Eka Sungsang ke Paing", used there from 2000-01-06. Earlier dates follow another pengalantaka (ke Pon) that is
      * not modelled here; dates before 2000 are extrapolated and unverified.
      */
     val PENGALANTAKA_PIVOT: LocalDate = LocalDate.of(2000, 1, 18)

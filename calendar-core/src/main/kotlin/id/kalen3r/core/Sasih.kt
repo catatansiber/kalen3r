@@ -8,6 +8,7 @@ enum class Sasih { KASA, KARO, KATIGA, KAPAT, KALIMA, KANEM, KAPITU, KAWOLU, KAN
 /** A day's sasih; isNampih marks the intercalary repeat of [sasih] (site: "Mala Sadha"). */
 data class SasihInfo(val sasih: Sasih, val isNampih: Boolean)
 
+// TODO: UI month views will need a cache: every sasihOn call walks month by month from the 2024 anchor.
 /** Sasih of [date] under [Lunar.TITHI_RULE]. */
 fun sasihOn(date: LocalDate): SasihInfo = SasihCalendar.DEFAULT.sasihOn(date)
 
@@ -22,7 +23,8 @@ fun nyepi(gregorianYear: Int): LocalDate = SasihCalendar.DEFAULT.nyepi(gregorian
  *
  * Rule (Çaka year mod 19, seven leap months per 19 years): 0, 6, 11 -> nampih DESTA; 3, 8, 14, 16 -> nampih
  * SADA; Çaka 1925 has no nampih Desta. The nampih month comes right AFTER the regular month of the same name.
- * Source: peradnya, balinese-date-js-lib, src/BalineseDate.ts, _F_CALC_SASIH_INFO (the "Nampih Sasih"
+ * Source: peradnya, balinese-date-js-lib (Apache-2.0; see THIRD_PARTY_NOTICES.md), src/BalineseDate.ts,
+ * _F_CALC_SASIH_INFO (the switch on currentSaka % 19; the "Nampih Sasih"
  * branch used from Çaka 1925 / 2003; the 1993-2002 "Sasih Kesinambungan" and pre-1993 "Malamasa" rules
  * are not modelled, so dates before Nyepi 2003 are unverified).
  * Checked here: golden 2024 shows Sadha then "Mala Sadha" (Çaka 1946, 1946 mod 19 = 8) and the published

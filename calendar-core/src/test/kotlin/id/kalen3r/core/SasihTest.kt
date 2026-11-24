@@ -19,6 +19,8 @@ class SasihTest {
     /**
      * Nyepi years whose independent sources disagree (golden/SOURCES.md, "Disagreements"): no assertion,
      * listed in the task-6 report instead. 2027: 03-08 vs 03-09.
+     * Nyepi 2028 (2028-03-26) IS asserted although SOURCES.md lists it in the disagreements table: its rival
+     * value there is "none" (only one value was found, from two sources), so no source contradicts it.
      */
     private val disputedNyepiYears = setOf(2027)
 

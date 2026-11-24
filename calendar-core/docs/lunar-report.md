@@ -180,7 +180,8 @@ day-to-tithi rule differs.
 
 The best-fit strict 63-day rule from Task 5 (phase 54, n0 19 counted from 2024-01-01) is **identical, on every
 day 2024-2035,** to the pengalantaka of peradnya's `balinese-date-js-lib` (`src/internal/Pivot.ts` PIVOT_2000:
-2000-01-18 = penanggal 12; `src/BalineseDate.ts` `_F_CALC_SASIH_DAY`: day count + ceil(days / 63);
+2000-01-18 = penanggal 12; `src/BalineseDate.ts` `_F_CALC_SASIH_DAY`: day count + ceil(days / 63), the nampih rule
+is in `_F_CALC_SASIH_INFO`;
 "Pengalantaka Eka Sungsang ke Paing", used there from 2000-01-06). `LunarTest.pengalantakaEqualsTask5FittedStrictRule`
 asserts this. That library's pivot was set long before this repo's golden data, so the pengalantaka matches the
 212 golden days with **no constant fitted to them**; the mean rule needs the fitted 12:54 (a 19-minute window).
