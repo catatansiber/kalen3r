@@ -9,15 +9,11 @@ import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,6 +28,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import id.kalen3r.R
+import id.kalen3r.ui.detail.DetailScreen
+import id.kalen3r.ui.month.MonthScreen
 
 data class TabSpec(
     val route: String,
@@ -57,7 +55,6 @@ object AppRoutes {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNav() {
     val nav = rememberNavController()
@@ -66,18 +63,6 @@ fun AppNav() {
     val onTab = AppRoutes.tabs.any { it.route == current }
 
     Scaffold(
-        topBar = {
-            if (current == AppRoutes.DETAIL) {
-                TopAppBar(
-                    title = { Text(stringResource(R.string.title_detail)) },
-                    navigationIcon = {
-                        IconButton(onClick = { nav.popBackStack() }) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
-                        }
-                    },
-                )
-            }
-        },
         bottomBar = {
             if (onTab) {
                 NavigationBar {
@@ -100,11 +85,17 @@ fun AppNav() {
         },
     ) { padding ->
         NavHost(nav, startDestination = AppRoutes.KALENDER, modifier = Modifier.padding(padding)) {
-            composable(AppRoutes.KALENDER) { Placeholder(R.string.placeholder_kalender) }
+            composable(AppRoutes.KALENDER) { MonthScreen { nav.navigate(AppRoutes.detail(it.toString())) } }
             composable(
                 AppRoutes.DETAIL,
                 arguments = listOf(navArgument("date") { type = NavType.StringType }),
-            ) { Placeholder(R.string.title_detail) }
+            ) { entry ->
+                DetailScreen(
+                    rawDate = entry.arguments?.getString("date"),
+                    onBack = { nav.popBackStack() },
+                    onRemind = { nav.navigate(AppRoutes.ALARM) },
+                )
+            }
             composable(AppRoutes.CARI) { Placeholder(R.string.placeholder_cari) }
             composable(AppRoutes.ALARM) { Placeholder(R.string.placeholder_alarm) }
             composable(AppRoutes.DONASI) { Placeholder(R.string.placeholder_donasi) }

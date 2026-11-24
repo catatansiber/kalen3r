@@ -21,6 +21,14 @@ private val KalenLightColors = lightColorScheme(
     onBackground = KalenColors.Ink,
     surface = KalenColors.Cream,
     onSurface = KalenColors.Ink,
+    primaryContainer = Color(0xFFCFE6E7),
+    onPrimaryContainer = KalenColors.Teal,
+    secondaryContainer = Color(0xFFF7E3B0),
+    onSecondaryContainer = KalenColors.Ink,
+    surfaceVariant = Color(0xFFF1E9D8),
+    onSurfaceVariant = Color(0xFF6B5B4B),
+    outline = Color(0xFFEADFC9),
+    outlineVariant = Color(0xFFEADFC9),
 )
 
 /** Light-only theme (teal, gold, cream, ink). */
