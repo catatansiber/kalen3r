@@ -82,4 +82,10 @@ class PawukonTest {
         assertEquals(Pawukon.of(a), Pawukon.of(a.plusDays(210)))
         assertEquals(Pawukon.of(a), Pawukon.of(a.minusDays(210 * 7)))
     }
+
+    @Test
+    fun preAnchorDateHasHardcodedIndex() {
+        // 2024-01-01 is before the anchor; pinned independently of the anchor-relative formula.
+        assertEquals(15, Pawukon.of(LocalDate.of(2024, 1, 1)).index)
+    }
 }
