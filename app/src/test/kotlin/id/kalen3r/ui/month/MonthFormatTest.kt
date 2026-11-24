@@ -4,6 +4,8 @@ import id.kalen3r.core.BaliCalendar
 import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class MonthFormatTest {
     @Test fun longDate() = assertEquals("Selasa, 24 November 2026", MonthFormat.longDate(LocalDate.of(2026, 11, 24)))
@@ -22,5 +24,19 @@ class MonthFormatTest {
     @Test fun sasihNameIndonesian() {
         assertEquals("Kanem", MonthFormat.sasihName(id.kalen3r.core.Sasih.KANEM))
         assertEquals("Kadasa", MonthFormat.sasihName(id.kalen3r.core.Sasih.KADASA))
+    }
+
+    @Test fun cakaYearRangeWhenYearChangesInMonth() {
+        val days = BaliCalendar.default.month(2026, 3)
+        assertEquals(1947, days.first().cakaYear)
+        assertEquals(1948, days.last().cakaYear)
+        assertTrue(MonthFormat.sasihSubtitle(days).startsWith("Çaka 1947–1948 · Sasih "), MonthFormat.sasihSubtitle(days))
+    }
+
+    @Test fun cakaYearSingleWhenNoChange() {
+        val days = BaliCalendar.default.month(2026, 6)
+        assertEquals(days.first().cakaYear, days.last().cakaYear)
+        assertTrue(MonthFormat.sasihSubtitle(days).startsWith("Çaka ${days.first().cakaYear} · Sasih "))
+        assertFalse(MonthFormat.sasihSubtitle(days).substringBefore(" · ").contains("–"))
     }
 }

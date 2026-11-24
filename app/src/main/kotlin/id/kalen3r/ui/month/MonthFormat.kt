@@ -31,7 +31,10 @@ object MonthFormat {
         val a = sasihName(days.first().sasih)
         val b = sasihName(days.last().sasih)
         val range = if (a == b) a else "$a–$b"
-        return "Çaka ${days.first().cakaYear} · Sasih $range"
+        val ya = days.first().cakaYear
+        val yb = days.last().cakaYear
+        val year = if (ya == yb) "$ya" else "$ya–$yb"
+        return "Çaka $year · Sasih $range"
     }
 
     /** Days of the month with a rerainan; Purnama, Tilem and Kajeng Kliwon first, then the rest. */
