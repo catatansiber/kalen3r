@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class PawukonSearchTest {
@@ -56,6 +57,15 @@ class PawukonSearchTest {
             findByWewaran(1, Saptawara.REDITE, Pancawara.PON, from, 1)
         }
         assertTrue(e is IllegalArgumentException)
+    }
+
+    @Test
+    fun mismatchMessageIsProperCaseIndonesian() {
+        val e = assertFailsWith<InvalidWewaranException> {
+            findByWewaran(1, Saptawara.BUDA, Pancawara.PAING, from, 1)
+        }
+        assertEquals("Kombinasi tidak cocok: Wuku Sinta Buda jatuh pada pancawara Kliwon, bukan Paing.", e.message)
+        assertFalse(e.message!!.contains("BUDA") || e.message!!.contains("KLIWON") || e.message!!.contains("PAING"))
     }
 
     @Test

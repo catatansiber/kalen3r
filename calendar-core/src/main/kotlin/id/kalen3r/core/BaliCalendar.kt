@@ -3,15 +3,20 @@ package id.kalen3r.core
 import java.time.LocalDate
 
 /**
- * The range of dates for which [BaliDay.verified] is true: 2024-01-01..2035-12-31, the spec's verified range.
+ * The date ranges covered by golden (reference) data: 2024-01-01..2024-06-30 and 2026-11-01..2026-11-30.
+ * [BaliDay.verified] is true only for dates inside these ranges. A test ties this list to
+ * calendar-core/src/test/resources/golden/coverage.json so the two cannot drift; when the owner adds golden
+ * data, update coverage.json, GoldenLoader.DAY_FILES and this list together.
  *
- * NOTE: the golden data (calendar-core/src/test/resources/golden) only partially covers this range
- * (see docs/lunar-report.md and golden/COVERAGE.md). Parts of the range rest on engine output (pengalantaka
- * rule + correction table) without a golden row. `verified` therefore means "inside the range the engine
- * is specified and tested for", not "every day matches an official calendar". The UI shows a warning only
- * when `verified` is false.
+ * Pawukon-based values (wewaran, urip, wuku) are exact everywhere; `verified` concerns the lunar-based values
+ * (tithi, sasih, Purnama, Tilem and the holy days derived from them).
  */
-val VERIFIED_RANGE: ClosedRange<LocalDate> = LocalDate.of(2024, 1, 1)..LocalDate.of(2035, 12, 31)
+val GOLDEN_COVERAGE_RANGES: List<ClosedRange<LocalDate>> = listOf(
+    LocalDate.of(2024, 1, 1)..LocalDate.of(2024, 6, 30),
+    LocalDate.of(2026, 11, 1)..LocalDate.of(2026, 11, 30),
+)
+
+internal fun isGoldenVerified(date: LocalDate): Boolean = GOLDEN_COVERAGE_RANGES.any { date in it }
 
 /** One fully resolved day. Lunar fields (sasih, tithi, purnama/tilem, rerainan) are the CORRECTED values. */
 data class BaliDay(
@@ -42,7 +47,7 @@ data class BaliDay(
     val isPurnama: Boolean,
     val isTilem: Boolean,
     val rerainan: List<Rerainan>,
-    /** True when [date] lies within [VERIFIED_RANGE]. */
+    /** True when [date] lies within [GOLDEN_COVERAGE_RANGES] (lunar-based values checked against golden data). */
     val verified: Boolean,
 )
 
@@ -102,7 +107,7 @@ class DefaultBaliCalendar(private val maxCachedMonths: Int = 240) : BaliCalendar
             isPurnama = l.isPurnama,
             isTilem = l.isTilem,
             rerainan = RerainanRules.on(date, lunar),
-            verified = date in VERIFIED_RANGE,
+            verified = isGoldenVerified(date),
         )
     }
 

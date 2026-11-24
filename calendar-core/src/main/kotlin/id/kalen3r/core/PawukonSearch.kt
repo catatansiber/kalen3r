@@ -14,13 +14,16 @@ fun otonan(birth: LocalDate, count: Int, from: LocalDate): List<LocalDate> {
     return List(count) { first.plusDays(it.toLong() * Pawukon.CYCLE) }
 }
 
+private fun proper(name: String) = name.lowercase().replaceFirstChar { it.uppercase() }
+
 private fun pawukonIndex(wuku: Int, saptawara: Saptawara, pancawara: Pancawara): Int {
     if (wuku !in 1..30) throw InvalidWewaranException("Wuku harus 1..30, bukan $wuku")
     val index = (wuku - 1) * 7 + saptawara.ordinal
     val actual = Pancawara.entries[index % 5]
     if (actual != pancawara) {
         throw InvalidWewaranException(
-            "Kombinasi tidak valid: Wuku ${Pawukon.WUKU_NAMES[wuku - 1]} $saptawara jatuh pada pancawara $actual, bukan $pancawara",
+            "Kombinasi tidak cocok: Wuku ${Pawukon.WUKU_NAMES[wuku - 1]} ${proper(saptawara.name)} " +
+                "jatuh pada pancawara ${proper(actual.name)}, bukan ${proper(pancawara.name)}.",
         )
     }
     return index

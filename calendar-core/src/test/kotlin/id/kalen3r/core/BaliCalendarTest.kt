@@ -63,15 +63,33 @@ class BaliCalendarTest {
     }
 
     @Test
-    fun verifiedFalseOutsideRange() {
-        assertFalse(cal.day(d("2036-01-01")).verified)
+    fun verifiedFalseOutsideGoldenRanges() {
         assertFalse(cal.day(d("2023-12-31")).verified)
+        assertFalse(cal.day(d("2024-07-01")).verified)
+        assertFalse(cal.day(d("2026-10-31")).verified)
+        assertFalse(cal.day(d("2026-12-01")).verified)
+        assertFalse(cal.day(d("2030-05-05")).verified)
+        assertFalse(cal.day(d("2036-01-01")).verified)
     }
 
     @Test
-    fun verifiedTrueAtEdges() {
+    fun verifiedTrueAtGoldenEdges() {
         assertTrue(cal.day(d("2024-01-01")).verified)
-        assertTrue(cal.day(d("2035-12-31")).verified)
+        assertTrue(cal.day(d("2024-06-30")).verified)
+        assertTrue(cal.day(d("2026-11-01")).verified)
+        assertTrue(cal.day(d("2026-11-30")).verified)
+    }
+
+    @Test
+    fun monthFacadeAgreesWithDayOnVerified() {
+        for (day in cal.month(2026, 12)) assertFalse(day.verified)
+        for (day in cal.month(2026, 11)) assertTrue(day.verified)
+    }
+
+    @Test
+    fun goldenCoverageRangesEqualCoverageJson() {
+        val fromJson = GoldenLoader.coverage().map { it.from..it.to }
+        assertEquals(fromJson, GOLDEN_COVERAGE_RANGES)
     }
 
     @Test
