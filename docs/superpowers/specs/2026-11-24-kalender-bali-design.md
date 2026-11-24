@@ -163,9 +163,16 @@ emas). `indeks = floorMod(hariSejakPatokan, 210)`.
 
 ### Bagian 2 — Bulan, Sasih, Çaka (hitungan + tabel koreksi)
 
-- Fase bulan dihitung astronomis (algoritma Meeus, galat menit), diubah ke
-  WITA (UTC+8). Tithi per hari dihitung pada patokan jam pagi (parameter
-  yang disetel sampai paling banyak cocok dengan data emas).
+- Fase bulan dihitung astronomis (algoritma Meeus, galat menit; dites ke
+  data USNO), diubah ke WITA (UTC+8).
+- Penetapan tithi per hari (keputusan 2026-11-24, berdasarkan data): aturan
+  aritmetika tradisional *pengalantaka* (lompat tithi tiap 63 hari) jadi
+  bawaan, karena cocok dengan semua data emas dan aturan publik yang ada;
+  aturan elongasi rata-rata di jam 12:54 WITA disimpan sebagai cadangan
+  (`Lunar.TITHI_RULE`, satu baris untuk ganti). Hitungan bulan murni di jam
+  pagi tidak cocok dengan data (55-92 beda dari 212 hari). Kepercayaan pada
+  pilihan ini rendah-sedang sampai ada data emas 2024-07 ke atas; tabel
+  koreksi menjaga hasil akhir.
 - Purnama = tithi 15 penanggal; Tilem = tithi 15 pangelong. Tithi yang
   terlewat (ngunalatri) dan hari ganda (nampih) dihasilkan dari hitungan
   ini lalu dikoreksi tabel jika beda dari kalender resmi.
