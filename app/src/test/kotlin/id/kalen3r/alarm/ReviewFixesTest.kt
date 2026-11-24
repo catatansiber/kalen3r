@@ -37,9 +37,17 @@ class ReviewFixesTest {
 
     @Test fun oldIdsAreCancelledAndDroppedFromPersisted() {
         val previous = planner.plan(LocalDateTime.of(2026, 11, 23, 12, 0), settings).map { it.id }.toSet()
-        val r = ReschedulePlan.compute(planner, settings, previous, day.atTime(6, 0).plus(Duration.ofHours(1)))
+        val r = ReschedulePlan.compute(planner, settings, previous, day.atTime(6, 0).plus(Duration.ofHours(2)).plusMinutes(1))
         assertTrue(AlarmPlanner.idFor(day, 0) in r.toCancel)
         assertFalse(AlarmPlanner.idFor(day, 0) in r.toPersist)
+    }
+
+    @Test fun alarmsDueWithinTwoHoursAreKeptNotRearmed() {
+        val previous = planner.plan(LocalDateTime.of(2026, 11, 23, 12, 0), settings).map { it.id }.toSet()
+        val r = ReschedulePlan.compute(planner, settings, previous, day.atTime(6, 0).plus(Duration.ofHours(1)))
+        assertFalse(AlarmPlanner.idFor(day, 0) in r.toCancel)
+        assertTrue(AlarmPlanner.idFor(day, 0) in r.toPersist)
+        assertTrue(r.toSchedule.none { it.id == AlarmPlanner.idFor(day, 0) })
     }
 
     @Test fun corruptValuesFallBackPerField() {

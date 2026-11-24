@@ -22,11 +22,19 @@ data class MonthUiState(
  */
 class MonthViewModel(
     private val calendar: BaliCalendar,
-    today: () -> LocalDate = LocalDate::now,
+    private val today: () -> LocalDate = LocalDate::now,
 ) : ViewModel() {
-    private val todayDate = today()
+    private var todayDate = today()
     private val _state = MutableStateFlow(build(todayDate.year, todayDate.monthValue))
     val state: StateFlow<MonthUiState> = _state.asStateFlow()
+
+    /** Re-reads the clock (call on ON_RESUME); the shown month stays, only the highlighted today changes. */
+    fun refreshToday() {
+        val now = today()
+        if (now == todayDate) return
+        todayDate = now
+        _state.value = _state.value.copy(todayDate = now)
+    }
 
     fun next() = moveBy(1)
     fun previous() = moveBy(-1)

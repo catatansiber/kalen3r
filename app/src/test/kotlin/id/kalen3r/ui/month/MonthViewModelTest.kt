@@ -37,8 +37,37 @@ class MonthViewModelTest {
 
     @Test fun unverifiedMonthSetsWarning() {
         assertTrue(vm(LocalDate.of(2023, 12, 1)).state.value.isUnverified)
-        assertTrue(vm(LocalDate.of(2036, 1, 1)).state.value.isUnverified)
+        assertTrue(vm(LocalDate.of(2026, 12, 1)).state.value.isUnverified)
+        assertTrue(vm(LocalDate.of(2030, 1, 1)).state.value.isUnverified)
+        assertFalse(vm(LocalDate.of(2024, 6, 15)).state.value.isUnverified)
         assertFalse(vm(LocalDate.of(2024, 1, 1)).state.value.isUnverified)
+        assertFalse(vm(LocalDate.of(2026, 11, 1)).state.value.isUnverified)
+    }
+
+    @Test fun monthPartlyOutsideGoldenIsUnverified() {
+        assertTrue(vm(LocalDate.of(2024, 7, 1)).state.value.isUnverified)
+    }
+
+    @Test fun refreshTodayMovesTodayButKeepsShownMonth() {
+        var now = LocalDate.of(2026, 11, 30)
+        val m = MonthViewModel(cal) { now }
+        m.next() // shown month: December 2026
+        now = LocalDate.of(2026, 12, 1)
+        m.refreshToday()
+        assertEquals(now, m.state.value.todayDate)
+        assertEquals(12, m.state.value.month)
+        assertEquals(2026, m.state.value.year)
+    }
+
+    @Test fun refreshTodayAfterMidnightUpdatesTodayDate() {
+        var now = LocalDate.of(2026, 11, 24)
+        val m = MonthViewModel(cal) { now }
+        assertEquals(now, m.state.value.todayDate)
+        now = now.plusDays(1)
+        m.refreshToday()
+        assertEquals(LocalDate.of(2026, 11, 25), m.state.value.todayDate)
+        m.next()
+        assertEquals(LocalDate.of(2026, 11, 25), m.state.value.todayDate)
     }
 
     @Test fun nextThenPreviousReturnsToSameMonth() {

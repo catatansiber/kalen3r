@@ -77,9 +77,9 @@ object CariFormat {
 class CariViewModel(
     private val calendar: BaliCalendar,
     private val messages: CariMessages = CariMessages.Default,
-    today: () -> LocalDate = LocalDate::now,
+    private val today: () -> LocalDate = LocalDate::now,
 ) : ViewModel() {
-    private val todayDate = today()
+    private var todayDate = today()
     private val _state = MutableStateFlow(CariUiState(year = todayDate.year.coerceIn(MIN_YEAR, MAX_YEAR)))
     val state: StateFlow<CariUiState> = _state.asStateFlow()
 
@@ -98,7 +98,19 @@ class CariViewModel(
     fun applyPurnama() = update { it.copy(tithiType = TithiType.PENANGGAL, tithiNumber = 15) }
     fun applyTilem() = update { it.copy(tithiType = TithiType.PANGELONG, tithiNumber = 15) }
 
+    /**
+     * Re-reads the clock (call on ON_RESUME). When the day changed, the shown results are recomputed so
+     * "Hari ini" / "Dalam N hari" stay correct.
+     */
+    fun refreshToday() {
+        val now = today()
+        if (now == todayDate) return
+        todayDate = now
+        if (_state.value.result != null) search()
+    }
+
     fun search() {
+        todayDate = today()
         val s = _state.value
         val result = try {
             when (s.tab) {

@@ -11,7 +11,8 @@
     <string name="back">Kembali</string>
     <string name="prev_month">Bulan sebelumnya</string>
     <string name="next_month">Bulan berikutnya</string>
-    <string name="unverified_notice">Hitungan bulan ini belum diverifikasi</string>
+    <string name="unverified_notice">Tanggal Purnama, Tilem, dan hari raya berbasis bulan di tanggal ini belum dicek dengan kalender resmi.</string>
+    <string name="month_unverified">Tanggal Purnama, Tilem, dan hari raya berbasis bulan di bulan ini belum dicek dengan kalender resmi.</string>
     <string name="weekday_min">Min</string>
     <string name="weekday_sen">Sen</string>
     <string name="weekday_sel">Sel</string>

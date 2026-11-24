@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 data class ReschedulePlan(val toSchedule: List<PlannedAlarm>, val toCancel: Set<Int>, val toPersist: Set<Int>) {
     companion object {
         /** Alarms due this recently stay wanted: they may be due but not yet delivered (Doze, inexact fallback, siblings at the same minute). */
-        val LOOKBACK: Duration = Duration.ofMinutes(10)
+        val LOOKBACK: Duration = Duration.ofHours(2)
 
         fun compute(planner: AlarmPlanner, settings: AlarmSettingsData, previousIds: Set<Int>, now: LocalDateTime): ReschedulePlan {
             val future = planner.plan(now, settings)

@@ -117,15 +117,43 @@ class AlarmPlannerTest {
         assertTrue(p.body.contains("Purnama"), p.body)
     }
 
-    @Test fun windowIsExactly60DaysNotMore() {
-        val settings = everything.copy(customReminders = setOf(start.plusDays(60), start.plusDays(59)))
-        val plan = planner.plan(now, settings)
+    @Test fun windowIsExactly60DaysNotMoreForNonCustomAlarms() {
+        val plan = planner.plan(now, everything)
         assertEquals(start.plusDays(59), plan.maxOf { it.at.toLocalDate() })
-        assertTrue(plan.any { it.title == "Pengingat" && it.at.toLocalDate() == start.plusDays(59) })
         assertTrue(plan.none { it.at.toLocalDate() == start.plusDays(60) })
         // started late in the day, still 60 calendar days counted from today
         val late = planner.plan(LocalDateTime.of(2026, 11, 20, 23, 0), noRainan)
         assertEquals(start.plusDays(59), late.maxOf { it.at.toLocalDate() })
+    }
+
+    private val onlyCustom = AlarmSettingsData(
+        triSandya = AlarmSettingsData.DEFAULT_SLOTS.map { it.copy(enabled = false) },
+        rainanGroups = emptySet(),
+    )
+
+    @Test fun customReminderBeyond60DaysIsPlanned() {
+        val far = start.plusDays(120)
+        val plan = planner.plan(now, onlyCustom.copy(customReminders = setOf(far)))
+        assertEquals(far, plan.single().at.toLocalDate())
+        // non-custom alarms enabled alongside stay inside the 60-day window
+        val mixed = planner.plan(now, everything.copy(customReminders = setOf(far, start.plusDays(60))))
+        assertTrue(mixed.any { it.title == "Pengingat" && it.at.toLocalDate() == far })
+        assertTrue(mixed.filter { it.title != "Pengingat" }.all { !it.at.toLocalDate().isAfter(start.plusDays(59)) })
+    }
+
+    @Test fun customReminderBeyond366DaysIsNotPlanned() {
+        val ok = start.plusDays(366)
+        val tooFar = start.plusDays(367)
+        val plan = planner.plan(now, onlyCustom.copy(customReminders = setOf(ok, tooFar)))
+        assertEquals(listOf(ok), plan.map { it.at.toLocalDate() })
+    }
+
+    @Test fun reschedulePlanHandlesLongRangeCustomReminders() {
+        val far = start.plusDays(200)
+        val settings = onlyCustom.copy(customReminders = setOf(far))
+        val r = ReschedulePlan.compute(planner, settings, emptySet(), now)
+        assertEquals(setOf(AlarmPlanner.idFor(far, AlarmPlanner.CUSTOM_CODE)), r.toPersist)
+        assertEquals(1, r.toSchedule.size)
     }
 
     @Test fun sameSettingsSamePlanAcrossDeviceTimeZones() {

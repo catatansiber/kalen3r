@@ -14,7 +14,8 @@ data class PlannedAlarm(
 )
 
 /**
- * Pure planner: turns settings into the future alarms of a rolling 60-day window (today + 59 days).
+ * Pure planner: turns settings into the future alarms of a rolling 60-day window (today + 59 days);
+ * custom reminders are planned up to [CUSTOM_WINDOW_DAYS] (366) days ahead.
  * Depends only on the passed [now] (device wall-clock time), never on the JVM default time zone.
  *
  * IDs are deterministic and collision-free by construction (no hashing): id = epochDay * 16 + code,
@@ -26,6 +27,7 @@ class AlarmPlanner(private val calendar: BaliCalendar, private val texts: AlarmT
     fun plan(now: LocalDateTime, settings: AlarmSettingsData): List<PlannedAlarm> {
         val from = now.toLocalDate()
         val to = from.plusDays(WINDOW_DAYS - 1L)
+        val customTo = from.plusDays(CUSTOM_WINDOW_DAYS.toLong())
         val out = ArrayList<PlannedAlarm>()
 
         fun add(a: PlannedAlarm) { if (a.at.isAfter(now)) out += a }
@@ -53,7 +55,7 @@ class AlarmPlanner(private val calendar: BaliCalendar, private val texts: AlarmT
         }
 
         for (date in settings.customReminders) {
-            if (date.isBefore(from) || date.isAfter(to)) continue
+            if (date.isBefore(from) || date.isAfter(customTo)) continue
             val names = runCatching { calendar.day(date).rerainan.map { it.name }.distinct() }.getOrDefault(emptyList())
             add(PlannedAlarm(idFor(date, CUSTOM_CODE), date.atTime(settings.rainanTime), texts.customTitle(), texts.customBody(names)))
         }
@@ -62,6 +64,8 @@ class AlarmPlanner(private val calendar: BaliCalendar, private val texts: AlarmT
 
     companion object {
         const val WINDOW_DAYS = 60
+        /** Custom reminders are planned up to this many days ahead (a user-picked date should not depend on the window rolling). */
+        const val CUSTOM_WINDOW_DAYS = 366
         const val CODES_PER_DAY = 16
         const val TRI_SANDYA_SLOTS = 3
         /** Code space per day: 0..2 Tri Sandya, 3..8 Rainan groups (room for 6), 9 custom, 10..15 reserved. */

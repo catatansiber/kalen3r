@@ -35,7 +35,41 @@ class CariViewModelTest {
         vm.setWuku(1); vm.setSaptawara(Saptawara.REDITE); vm.setPancawara(Pancawara.PON)
         vm.search()
         val r = assertIs<CariResult.Error>(vm.state.value.result)
-        assertTrue(r.message.startsWith("Kombinasi tidak valid"), r.message)
+        assertTrue(r.message.startsWith("Kombinasi tidak cocok"), r.message)
+    }
+
+    @Test fun mismatchMessageHasNoRawEnumNames() {
+        val vm = vm()
+        vm.selectOtonanMode(OtonanMode.WEWARAN)
+        vm.setWuku(1); vm.setSaptawara(Saptawara.BUDA); vm.setPancawara(Pancawara.PAING)
+        vm.search()
+        val r = assertIs<CariResult.Error>(vm.state.value.result)
+        assertEquals("Kombinasi tidak cocok: Wuku Sinta Buda jatuh pada pancawara Kliwon, bukan Paing.", r.message)
+        assertTrue(Regex("[A-Z]{3,}").find(r.message) == null, "uppercase enum name in: ${r.message}")
+    }
+
+    @Test fun refreshTodayUpdatesDaysFromToday() {
+        var now = LocalDate.of(2026, 11, 24)
+        val vm = CariViewModel(cal) { now }
+        val birth = LocalDate.of(2000, 5, 17)
+        vm.setBirth(birth)
+        vm.search()
+        val before = dates(vm).items.first()
+        assertTrue(before.daysFromToday >= 1, "pick a birth whose next otonan is not today")
+        now = now.plusDays(1)
+        vm.refreshToday()
+        val after = dates(vm).items.first()
+        assertEquals(before.date, after.date)
+        assertEquals(before.daysFromToday - 1, after.daysFromToday)
+    }
+
+    @Test fun searchUsesCurrentClockWithoutRefresh() {
+        var now = LocalDate.of(2026, 11, 24)
+        val vm = CariViewModel(cal) { now }
+        vm.setBirth(LocalDate.of(2000, 5, 17))
+        now = now.plusDays(3)
+        vm.search()
+        assertTrue(dates(vm).items.all { !it.date.isBefore(now) })
     }
 
     @Test fun birthBefore1900StillWorks() {

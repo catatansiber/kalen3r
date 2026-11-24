@@ -51,6 +51,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -82,6 +84,7 @@ fun CariScreen(onDateClick: (LocalDate) -> Unit) {
     val vm: CariViewModel = viewModel(
         factory = viewModelFactory { initializer { CariViewModel(CalendarProvider.calendar, messages = messages) } },
     )
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.refreshToday() }
     val state by vm.state.collectAsStateWithLifecycle()
     CariContent(state, vm, onDateClick)
 }
