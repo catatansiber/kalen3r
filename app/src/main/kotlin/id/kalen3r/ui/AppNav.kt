@@ -13,9 +13,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import id.kalen3r.alarm.AlarmScheduler
+import id.kalen3r.alarm.ReminderOutcome
+import id.kalen3r.ui.alarm.AlarmScreen
+import id.kalen3r.ui.alarm.BatteryHelpScreen
+import id.kalen3r.ui.alarm.rememberNotificationRequester
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -44,6 +55,7 @@ object AppRoutes {
     const val DETAIL = "detail/{date}"
     const val CARI = "cari"
     const val ALARM = "alarm"
+    const val ALARM_HELP = "alarm/bantuan"
     const val DONASI = "donasi"
 
     fun detail(date: String) = "detail/$date"
@@ -62,8 +74,13 @@ fun AppNav() {
     val backStack by nav.currentBackStackEntryAsState()
     val current = backStack?.destination?.route
     val onTab = AppRoutes.tabs.any { it.route == current }
+    val context = LocalContext.current
+    val snackbar = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val requestNotifications = rememberNotificationRequester()
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbar) },
         bottomBar = {
             if (onTab) {
                 NavigationBar {
@@ -94,11 +111,20 @@ fun AppNav() {
                 DetailScreen(
                     rawDate = entry.arguments?.getString("date"),
                     onBack = { nav.popBackStack() },
-                    onRemind = { nav.navigate(AppRoutes.ALARM) },
+                    onRemind = { date ->
+                        scope.launch {
+                            val outcome = AlarmScheduler.addReminder(context, date)
+                            if (outcome == ReminderOutcome.ADDED) requestNotifications()
+                            snackbar.showSnackbar(
+                                context.getString(if (outcome == ReminderOutcome.ADDED) R.string.reminder_added else R.string.reminder_past),
+                            )
+                        }
+                    },
                 )
             }
             composable(AppRoutes.CARI) { CariScreen { nav.navigate(AppRoutes.detail(it.toString())) } }
-            composable(AppRoutes.ALARM) { Placeholder(R.string.placeholder_alarm) }
+            composable(AppRoutes.ALARM) { AlarmScreen(onOpenHelp = { nav.navigate(AppRoutes.ALARM_HELP) }) }
+            composable(AppRoutes.ALARM_HELP) { BatteryHelpScreen(onBack = { nav.popBackStack() }) }
             composable(AppRoutes.DONASI) { Placeholder(R.string.placeholder_donasi) }
         }
     }

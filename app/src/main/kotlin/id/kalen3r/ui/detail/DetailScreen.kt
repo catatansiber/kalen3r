@@ -53,7 +53,7 @@ internal fun mainRerainan(day: BaliDay): String? {
 }
 
 @Composable
-fun DetailScreen(rawDate: String?, onBack: () -> Unit, onRemind: () -> Unit) {
+fun DetailScreen(rawDate: String?, onBack: () -> Unit, onRemind: (java.time.LocalDate) -> Unit) {
     val date = remember(rawDate) { parseDetailDate(rawDate) }
     if (date == null) {
         InvalidDate(onBack)
@@ -78,7 +78,7 @@ private fun InvalidDate(onBack: () -> Unit) {
 }
 
 @Composable
-fun DetailContent(day: BaliDay, onBack: () -> Unit, onRemind: () -> Unit) {
+fun DetailContent(day: BaliDay, onBack: () -> Unit, onRemind: (java.time.LocalDate) -> Unit) {
     val pasaran = MonthFormat.pancawaraName(day.pancawara)
     val sapta = MonthFormat.saptawaraName(day.saptawara)
     val main = mainRerainan(day) ?: "$sapta $pasaran"
@@ -109,7 +109,7 @@ fun DetailContent(day: BaliDay, onBack: () -> Unit, onRemind: () -> Unit) {
                 Text(stringResource(R.string.unverified_notice), color = Muted, fontSize = 12.sp)
             }
             Button(
-                onClick = onRemind,
+                onClick = { onRemind(day.date) },
                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = KalenColors.Gold, contentColor = KalenColors.Ink),
             ) { Text(stringResource(R.string.remind_me), fontWeight = FontWeight.Bold) }
