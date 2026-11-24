@@ -32,7 +32,7 @@ object GoldenLoader {
     val SANGAWARA = Pawukon.SANGAWARA_NAMES.map { it.lowercase() }
     val DASAWARA = Pawukon.DASAWARA_NAMES.map { it.lowercase() }
 
-    /** Day CSVs that coverage.json's ranges are read from. */
+    /** Day CSVs read by the tests and by the corrections generator; must stay in step with coverage.json and GOLDEN_COVERAGE_RANGES. */
     val DAY_FILES = listOf("days-2024.csv", "days-2026.csv")
 
     private fun text(path: String, base: String = BASE): String =

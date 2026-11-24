@@ -30,6 +30,18 @@ android {
     val hasReleaseSigning =
         releaseKeystore != null && releaseStorePassword != null && releaseKeyAlias != null
 
+    // Partial signing values (some KALEN3R_* set, but not all required ones) would otherwise be ignored
+    // silently and give an unsigned APK. Warn and name what is missing.
+    val signingRequired = mapOf(
+        "KALEN3R_KEYSTORE" to releaseKeystore,
+        "KALEN3R_KEYSTORE_PASSWORD" to releaseStorePassword,
+        "KALEN3R_KEY_ALIAS" to releaseKeyAlias,
+    )
+    if (!hasReleaseSigning && (signingRequired.values.any { it != null } || releaseKeyPassword != null)) {
+        val missing = signingRequired.filterValues { it == null }.keys.joinToString(", ")
+        logger.warn("WARNING: release signing values are incomplete; missing: $missing. assembleRelease will produce an UNSIGNED apk.")
+    }
+
     signingConfigs {
         if (hasReleaseSigning) {
             create("release") {

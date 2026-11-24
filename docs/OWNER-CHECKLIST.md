@@ -14,7 +14,7 @@ Letaknya: berkas `app/build.gradle.kts`, satu baris `applicationId = "id.kalen3r
 
 Letakkan gambar QRIS di `app/src/main/res/drawable-nodpi/qris_donasi.png` (buat foldernya jika belum ada; persegi, disarankan minimal 1000 x 1000 px). Tanpa file ini layar Donasi menampilkan "QRIS segera hadir" dan tombol bagikan disembunyikan. Isi nama penerima (opsional) pada string `donasi_penerima` di `app/src/main/res/values/strings.xml`; kosong berarti baris penerima tidak tampil.
 
-Ukuran gambar QRIS: persegi, 1000 sampai 2000 px (maksimal sekitar 2000 px, karena layar memuat gambar pada ukuran aslinya). Berkas `app/src/main/res/raw/keep.xml` mencegah shrinkResources membuang gambar `qris_donasi` yang dicari saat aplikasi berjalan; jangan dihapus.
+Ukuran gambar QRIS: persegi, 1000 sampai 2000 px (maksimal sekitar 2000 px, karena layar memuat gambar pada ukuran aslinya). Berkas `app/src/main/res/raw/keep.xml` mencegah shrinkResources membuang gambar `qris_donasi` dan suara `tri_sandya` yang dicari saat aplikasi berjalan; jangan dihapus.
 
 ## 3. Suara Tri Sandya (mp3)
 
@@ -30,6 +30,10 @@ Letakkan berkas di `app/src/main/res/raw/tri_sandya.mp3` (buat folder `raw` bila
 Kunci ini membuktikan bahwa APK berasal dari Anda. Buat dengan perintah berikut (di komputer yang punya Java; ganti jalur dan nama):
 
     keytool -genkeypair -v -keystore ~/kunci-kalender/kalender-bali.jks -alias kalender -keyalg RSA -keysize 2048 -validity 10000
+
+Windows (Command Prompt; folder `C:\kunci-kalender` dibuat dulu, dan `keytool` ada di folder `bin` Java):
+
+    keytool -genkeypair -v -keystore C:\kunci-kalender\kalender-bali.jks -alias kalender -keyalg RSA -keysize 2048 -validity 10000
 
 Anda akan diminta membuat kata sandi dan mengisi nama. Catat kata sandi di tempat aman.
 
@@ -49,7 +53,18 @@ Pastikan nama paket (1), QRIS (2), dan mp3 (3) sudah final. Lalu jalankan di fol
     export KALEN3R_KEY_PASSWORD='kata-sandi-kunci'   # boleh dihilangkan jika sama dengan kata sandi keystore
     gradle :app:assembleRelease
 
-Hasilnya: `app/build/outputs/apk/release/app-release.apk`. Jika keempat variabel tidak diisi, hasilnya `app-release-unsigned.apk` yang TIDAK bisa dipasang; itu bukan berkas untuk dibagikan. Nilai yang sama bisa diberikan sebagai `-PKALEN3R_KEYSTORE=...` dan seterusnya. Jangan menulis kata sandi ke berkas di dalam proyek.
+Windows (Command Prompt, satu baris per perintah; pakai `gradlew.bat` dari folder proyek bila `gradle` tidak terpasang):
+
+    set ANDROID_HOME=C:\android-sdk
+    set KALEN3R_KEYSTORE=C:\kunci-kalender\kalender-bali.jks
+    set KALEN3R_KEYSTORE_PASSWORD=kata-sandi-anda
+    set KALEN3R_KEY_ALIAS=kalender
+    set KALEN3R_KEY_PASSWORD=kata-sandi-kunci
+    gradlew.bat :app:assembleRelease
+
+PowerShell memakai `$env:KALEN3R_KEYSTORE = "C:\kunci-kalender\kalender-bali.jks"` dan seterusnya. Di Linux/Mac, `./gradlew` bisa dipakai sebagai pengganti `gradle`.
+
+Hasilnya: `app/build/outputs/apk/release/app-release.apk`. Jika variabel tidak diisi, hasilnya `app-release-unsigned.apk` yang TIDAK bisa dipasang; itu bukan berkas untuk dibagikan. Wajib ada: `KALEN3R_KEYSTORE`, `KALEN3R_KEYSTORE_PASSWORD`, dan `KALEN3R_KEY_ALIAS` (`KALEN3R_KEY_PASSWORD` opsional). Bila hanya sebagian yang diisi, Gradle mencetak peringatan `WARNING: release signing values are incomplete; missing: ...` yang menyebut variabel yang kurang; periksa keluaran Gradle sebelum membagikan APK. Jalur keystore yang relatif dibaca dari folder `app/`, bukan dari folder proyek; sebaiknya pakai jalur lengkap (absolut). Nilai yang sama bisa diberikan sebagai `-PKALEN3R_KEYSTORE=...` dan seterusnya. Jangan menulis kata sandi ke berkas di dalam proyek.
 
 Memeriksa tanda tangan: `$ANDROID_HOME/build-tools/<versi>/apksigner verify --print-certs app/build/outputs/apk/release/app-release.apk`.
 
@@ -64,7 +79,7 @@ Catatan: penyusutan kode (R8/minify) sengaja dimatikan pada v1, jadi APK lebih b
 3. Tulis petunjuk bagi pengguna: setelah mengunduh, Android akan meminta izin "Instal dari sumber tidak dikenal" untuk peramban atau aplikasi File yang dipakai; izinkan lalu pasang. Izin itu bisa dimatikan lagi setelahnya.
 4. Tidak ada pembaruan otomatis. Untuk versi baru, unggah APK baru dan beri tahu pengguna agar mengunduh dan memasangnya di atas versi lama (bisa, asalkan nama paket dan kunci yang sama dan `versionCode` lebih besar).
 5. Unggah juga `PRIVACY.md` sebagai halaman Kebijakan Privasi dan tautkan dari halaman unduhan.
-6. Untuk rilis, sebaiknya cantumkan "Aplikasi belum diverifikasi penuh untuk tahun 2024 Juli sampai 2035" bila data belum dilengkapi (lihat bagian 9 dan README).
+6. Untuk rilis, sebaiknya cantumkan bahwa hitungan bulan (Purnama, Tilem, hari raya berbasis bulan) baru dicek dengan kalender resmi pada 2024-01..06 dan 2026-11, bila data belum dilengkapi (lihat bagian 8, 9 dan README). Hitungan Pawukon eksak di semua tahun.
 
 ## 7. Uji alarm di HP sungguhan (Xiaomi, Oppo, Huawei, Asus)
 
@@ -94,11 +109,11 @@ Letak berkas:
 Yang sebaiknya Anda lakukan setiap tahun sebelum Desember (dan sekali sekarang untuk menutup celah):
 1. Cari tanggal resmi terbitan lembaga yang berwenang, misalnya kalender Parisada Hindu Dharma Indonesia (PHDI) atau Kemenag, untuk tahun berikutnya: tanggal Purnama, Tilem, hari raya (Galungan, Kuningan, Nyepi, Saraswati, Pagerwesi, Siwaratri, dan lain-lain).
 2. Berikan datanya dalam salah satu bentuk: (a) berkas CSV dengan format golden: `date,wuku,saptawara,pancawara,triwara,caturwara,astawara,sangawara,dasawara,urip,tithiType,tithiNo,sasih,caka,flags` (contoh baris ada di `days-2024.csv`; hanya fakta tanggal, jangan salin teks atau tabel dari situs lain), atau (b) daftar tanggal resmi sederhana dan minta pengembang menambah baris koreksi.
-3. Pengembang menaruh CSV di folder golden, memperbarui `coverage.json` dan `COVERAGE.md`, lalu menjalankan `gradle :calendar-core:test` dan `gradle :calendar-core:generateCorrections`.
+3. Pengembang menaruh CSV di folder golden, memperbarui `coverage.json`, `COVERAGE.md`, `GoldenLoader.DAY_FILES`, dan `GOLDEN_COVERAGE_RANGES`, lalu menjalankan `gradle :calendar-core:test` dan `gradle :calendar-core:generateCorrections`.
 
-Cara kerja `generateCorrections`: skrip membandingkan hasil mesin dengan data emas pada rentang di `coverage.json` dan menulis ulang `corrections.json` hanya untuk tanggal yang berbeda. Laporan jumlah koreksi per tahun harus kecil; jumlah besar berarti aturan hitungan salah dan harus dibenahi, bukan ditambal. Setelah itu bangun ulang APK dan naikkan versi (langkah 5).
+Cara kerja `generateCorrections`: skrip membaca daftar berkas yang ditulis tetap di kode (`GoldenLoader.DAY_FILES` di `calendar-core/src/test/kotlin/id/kalen3r/core/GoldenLoader.kt`, sekarang `days-2024.csv` dan `days-2026.csv`), BUKAN `coverage.json`. Karena itu CSV golden baru harus didaftarkan di tiga tempat: `GoldenLoader.DAY_FILES`, `coverage.json`, dan daftar `GOLDEN_COVERAGE_RANGES` di `calendar-core/src/main/kotlin/id/kalen3r/core/BaliCalendar.kt` (ada tes yang gagal bila `GOLDEN_COVERAGE_RANGES` dan `coverage.json` berbeda, dan tes jumlah hari gagal bila `DAY_FILES` dan `coverage.json` berbeda). Skrip hanya membandingkan empat bidang: tithi, sasih, serta penanda Purnama dan Tilem; tanggal hari raya lain tidak dibandingkan dan tidak dikoreksi otomatis. Hasilnya menulis ulang `corrections.json` hanya untuk tanggal yang berbeda. Laporan jumlah koreksi per tahun harus kecil; jumlah besar berarti aturan hitungan salah dan harus dibenahi, bukan ditambal. Setelah itu bangun ulang APK dan naikkan versi (langkah 5).
 
-Tanpa langkah ini, tahun di luar data terverifikasi tetap tampil dengan peringatan "hitungan belum diverifikasi".
+Arti `verified`: hanya tanggal di dalam rentang data emas yang dianggap terverifikasi (sekarang 2024-01..06 dan 2026-11). Di luar itu UI menampilkan peringatan bahwa Purnama, Tilem, dan hari raya berbasis bulan belum dicek dengan kalender resmi. Nilai Pawukon (wewaran, urip, wuku) eksak di semua tahun. Hampir semua bulan akan menampilkan peringatan sampai data emas dilengkapi; itu keadaan yang jujur.
 
 ## 9. Cek dua area yang belum pasti (sebelum rilis)
 

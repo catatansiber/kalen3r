@@ -42,7 +42,7 @@ APK keluar di `app/build/outputs/apk/`. Cara membuat APK bertanda tangan ada di 
 7. Sasih dan tahun Çaka diturunkan dari urutan bulan (termasuk nampih dan ngunalatri); Nyepi = penanggal 1 Kadasa.
 8. `corrections.json` (resource `:calendar-core`) memuat koreksi per tanggal bila hasil hitungan beda dari data resmi; dihasilkan skrip `gradle :calendar-core:generateCorrections`, tidak ditulis tangan.
 9. Rerainan (Galungan, Kuningan, Tumpek, Kajeng Kliwon, dan lain-lain) berbasis Pawukon (eksak) atau bulan (Purnama, Tilem, Nyepi, Siwaratri).
-10. Di luar data terverifikasi, `BaliDay.verified = false` dan UI menampilkan peringatan.
+10. `BaliDay.verified = true` hanya untuk tanggal di dalam rentang data emas (`GOLDEN_COVERAGE_RANGES`, sama dengan `coverage.json`: 2024-01-01..2024-06-30 dan 2026-11-01..2026-11-30). Di luar itu `verified = false` dan UI menampilkan peringatan bahwa Purnama, Tilem, dan hari raya berbasis bulan belum dicek dengan kalender resmi. Nilai berbasis Pawukon (wewaran, urip, wuku, dan hari raya Pawukon) eksak di mana pun dan tidak ikut diperingatkan.
 
 Detail: desain di `docs/superpowers/specs/`, laporan hitungan bulan di `calendar-core/docs/lunar-report.md`.
 
