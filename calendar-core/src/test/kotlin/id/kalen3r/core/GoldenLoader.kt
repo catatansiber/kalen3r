@@ -32,8 +32,11 @@ object GoldenLoader {
     val SANGAWARA = Pawukon.SANGAWARA_NAMES.map { it.lowercase() }
     val DASAWARA = Pawukon.DASAWARA_NAMES.map { it.lowercase() }
 
-    private fun text(path: String): String =
-        (GoldenLoader::class.java.getResourceAsStream(BASE + path)
+    /** Day CSVs that coverage.json's ranges are read from. */
+    val DAY_FILES = listOf("days-2024.csv", "days-2026.csv")
+
+    private fun text(path: String, base: String = BASE): String =
+        (GoldenLoader::class.java.getResourceAsStream(base + path)
             ?: error("golden resource missing: $path")).bufferedReader().use { it.readText() }
 
     fun coverage(): List<CoveredRange> {
@@ -103,8 +106,8 @@ object GoldenLoader {
         else -> n
     }
 
-    fun days(file: String): List<GoldenDay> {
-        val lines = text(file).lines().filter { it.isNotBlank() }
+    fun days(file: String, base: String = BASE): List<GoldenDay> {
+        val lines = text(file, base).lines().filter { it.isNotBlank() }
         val header = lines.first().split(",")
         return lines.drop(1).map { line ->
             val cells = line.split(",")
@@ -130,7 +133,7 @@ object GoldenLoader {
     /** All golden day rows, asserting the loaded count equals the declared covered day count. */
     fun allDays(): List<GoldenDay> {
         val ranges = coverage()
-        val rows = days("days-2024.csv") + days("days-2026.csv")
+        val rows = DAY_FILES.flatMap { days(it) }
         val declared = ranges.sumOf { it.days }
         check(rows.size == declared) { "golden rows ${rows.size} != declared covered days $declared" }
         check(rows.all { r -> ranges.any { r.date >= it.from && r.date <= it.to } }) { "golden row outside declared ranges" }

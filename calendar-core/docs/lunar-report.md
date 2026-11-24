@@ -244,3 +244,15 @@ number differs by one on each). The golden collection gap (2024-07 to 2026-10) c
   official reset would break the strict rule, as the mean rule's drift would break it differently.
 - Under the pengalantaka a Purnama/Tilem tithi is still skipped about once a year (e.g. Purnama 2024-09-18,
   2027-04-21, 2029-11-21 against USNO). Labelling of such days is left to the correction table (Task 7).
+
+## Task 7: corrections table
+
+- `rawLunarDay(date)` is the uncorrected day; `Corrections.apply` applies rows from `src/main/resources/corrections.json`
+  (`{"date","field","value","source"}`; fields tithi, sasih, purnama, tilem, rerainanAdd, rerainanRemove; never pawukon).
+- Regenerate with `gradle :calendar-core:generateCorrections` (diffs raw engine vs the golden CSVs, source `golden:<file>`).
+  Result on the 212 covered days: **0 rows**, the raw engine already matches them. The committed file is `[]`.
+  The pipeline is exercised by `CorrectionsTest` on a synthetic golden fixture with deliberate disagreements.
+- **Purnama/Tilem on a skipped tithi (provisional, unverified).** The pengalantaka skips tithi 15/30 at
+  most about once a year (first 2024-09-18; CorrectionsTest scans 2024..2030 and asserts at least 2). `rawLunarDay` then marks the
+  day BEFORE the skipped tithi (penanggal 14 / pangelong 14), following the traditional labelling. No golden day covers this,
+  so it is unverified; a `purnama`/`tilem` correction row fixes any day that official data contradicts.

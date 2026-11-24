@@ -23,3 +23,12 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+// Regenerates src/main/resources/corrections.json from the golden CSVs listed in coverage.json.
+tasks.register<JavaExec>("generateCorrections") {
+    group = "verification"
+    description = "Diff raw engine vs golden and rewrite corrections.json"
+    classpath = sourceSets["test"].runtimeClasspath
+    mainClass.set("id.kalen3r.core.CorrectionsGenerator")
+    args(layout.projectDirectory.file("src/main/resources/corrections.json").asFile.absolutePath)
+}
