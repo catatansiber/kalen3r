@@ -58,23 +58,26 @@ internal object RerainanRules {
 
     fun on(date: LocalDate, lunar: (LocalDate) -> RawLunarDay): List<Rerainan> {
         val p = Pawukon.of(date)
-        val out = ArrayList(fromLunar(date, lunar))
+        val out = ArrayList(lunarRules(date, lunar))
         if (p.triwara == Triwara.KAJENG && p.pancawara == Pancawara.KLIWON) out += Rerainan(date, "Kajeng Kliwon", RerainanKind.KAJENG_KLIWON) // [G]
         for (r in PAWUKON_RULES) {
             if ((r.wuku == null || r.wuku == p.wuku) && (r.sapta == null || r.sapta == p.saptawara) && (r.panca == null || r.panca == p.pancawara)) {
                 out += Rerainan(date, r.name, r.kind)
             }
         }
-        return out
+        return applyCorrections(lunar(date), out)
     }
 
     /**
      * Lunar rules from corrected lunar days ([lunar] must apply the correction table). Purnama/Tilem come from
      * the day's flags; Nyepi is the day after Tilem Kesanga (KANAWA); Ngembak Geni the day after Nyepi; Siwaratri is
      * the day before Tilem of Sasih Kapitu (pangelong 14, or 13 when tithi 14 is skipped: golden 2024-01-09).
-     * Correction rows may add rerainan names (kind OTHER) or remove names.
+     * Correction rows (applied to the final list in [on]) may add rerainan names (kind OTHER) or remove names.
      */
-    fun fromLunar(date: LocalDate, lunar: (LocalDate) -> RawLunarDay): List<Rerainan> {
+    fun fromLunar(date: LocalDate, lunar: (LocalDate) -> RawLunarDay): List<Rerainan> =
+        applyCorrections(lunar(date), lunarRules(date, lunar))
+
+    private fun lunarRules(date: LocalDate, lunar: (LocalDate) -> RawLunarDay): List<Rerainan> {
         val day = lunar(date)
         fun isNyepi(d: LocalDate) = lunar(d.minusDays(1)).let { it.isTilem && it.sasih == Sasih.KANAWA && !it.isNampihSasih }
         val out = ArrayList<Rerainan>()
@@ -85,7 +88,7 @@ internal object RerainanRules {
         lunar(date.plusDays(1)).let {
             if (it.isTilem && it.sasih == Sasih.KAPITU && !it.isNampihSasih) out += Rerainan(date, "Hari Siwaratri", RerainanKind.SIWARATRI) // [G]
         }
-        return applyCorrections(day, out)
+        return out
     }
 
     /** Applies rerainanAdd / rerainanRemove of the corrected day to a list built for that same day. */

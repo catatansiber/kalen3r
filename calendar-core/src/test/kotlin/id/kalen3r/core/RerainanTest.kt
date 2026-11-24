@@ -118,6 +118,32 @@ class RerainanTest {
         assertTrue(RerainanRules.fromLunar(nyepi2026, noTilem).none { it.kind == RerainanKind.NYEPI })
     }
 
+    private fun withCorrection(date: LocalDate, change: (RawLunarDay) -> RawLunarDay) =
+        { x: LocalDate -> rawLunarDay(x).let { if (x == date) change(it) else it } }
+
+    @Test
+    fun removeCorrectionAppliesToPawukonRerainan() {
+        val galungan = d("2026-06-17")
+        assertTrue("Hari Raya Galungan" in RerainanRules.on(galungan) { rawLunarDay(it) }.map { it.name })
+        val got = RerainanRules.on(galungan, withCorrection(galungan) { it.copy(rerainanRemove = setOf("Hari Raya Galungan")) })
+        assertTrue(got.none { it.name == "Hari Raya Galungan" }, got.toString())
+    }
+
+    @Test
+    fun removeCorrectionAppliesToKajengKliwon() {
+        val kk = allDays(d("2026-11-01"), d("2026-12-31")).first { on(it, RerainanKind.KAJENG_KLIWON).isNotEmpty() }
+        val got = RerainanRules.on(kk, withCorrection(kk) { it.copy(rerainanRemove = setOf("Kajeng Kliwon")) })
+        assertTrue(got.none { it.kind == RerainanKind.KAJENG_KLIWON }, got.toString())
+    }
+
+    @Test
+    fun addCorrectionAddsOtherNameOnAnyDay() {
+        val galungan = d("2026-06-17")
+        val got = RerainanRules.on(galungan, withCorrection(galungan) { it.copy(rerainanAdd = setOf("Odalan Y")) })
+        assertTrue(got.any { it.name == "Odalan Y" && it.kind == RerainanKind.OTHER && it.date == galungan })
+        assertTrue(got.any { it.name == "Hari Raya Galungan" })
+    }
+
     // ---- Golden (212 days) ---------------------------------------------------------------
 
     /**
