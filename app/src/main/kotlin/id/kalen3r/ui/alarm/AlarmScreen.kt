@@ -28,7 +28,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -66,15 +65,12 @@ private val CardBorder = Color(0xFFEADFC9)
 private val Muted = Color(0xFF6B5B4B)
 private val Hhmm = DateTimeFormatter.ofPattern("HH:mm")
 
-private fun anyOn(s: AlarmSettingsData) = s.triSandya.any { it.enabled } || s.rainanGroups.isNotEmpty() || s.customReminders.isNotEmpty()
-
 @Composable
 fun AlarmScreen(onOpenHelp: () -> Unit) {
     val context = LocalContext.current
     val store = remember { AlarmSettings(context) }
     val loaded by store.flow.collectAsStateWithLifecycle(initialValue = null)
     val settings = loaded
-    val requestNotifications = rememberNotificationRequester()
 
     // permission state is re-read whenever the user comes back from a system settings screen
     var tick by remember { mutableIntStateOf(0) }
@@ -82,13 +78,8 @@ fun AlarmScreen(onOpenHelp: () -> Unit) {
     val notifOk = remember(tick) { notificationsEnabled(context) }
     val exactOk = remember(tick) { AlarmScheduler(context).canScheduleExact() }
 
-    // Tri Sandya alarms are on by default, so ask once when the screen opens if nobody has been asked yet
-    LaunchedEffect(settings != null) { if (settings != null && anyOn(settings)) requestNotifications() }
-
     fun change(transform: (AlarmSettingsData) -> AlarmSettingsData) {
-        val after = settings?.let(transform)
         AlarmScheduler.updateSettings(context, transform)
-        if (after != null && anyOn(after)) requestNotifications()
     }
 
     Column(Modifier.fillMaxSize().background(KalenColors.Cream)) {

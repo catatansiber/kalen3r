@@ -6,10 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import id.kalen3r.CalendarProvider
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.LocalDate
@@ -24,19 +26,18 @@ class AlarmScheduler(context: Context) {
     private val app = context.applicationContext
     private val alarmManager = app.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private val settings = AlarmSettings(app)
-    private val planner = AlarmPlanner(CalendarProvider.calendar)
+    private val planner = AlarmPlanner(CalendarProvider.calendar, AndroidAlarmTexts(app))
 
     /** False on API 31+ when the user has revoked exact alarms (API 31-32: SCHEDULE_EXACT_ALARM; 33+: USE_EXACT_ALARM is granted at install). */
     fun canScheduleExact(): Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
 
     suspend fun rescheduleAll(now: LocalDateTime = LocalDateTime.now()) = lock.withLock {
-        val plan = planner.plan(now, settings.load())
-        val planned = plan.map { it.id }.toSet()
-        for (id in settings.scheduledIds() - planned) cancel(id)
+        val r = ReschedulePlan.compute(planner, settings.load(), settings.scheduledIds(), now)
+        for (id in r.toCancel) cancel(id)
         val exact = canScheduleExact()
         val zone = ZoneId.systemDefault()
-        for (a in plan) schedule(a, a.at.atZone(zone).toInstant().toEpochMilli(), exact)
-        settings.saveScheduledIds(planned)
+        for (a in r.toSchedule) schedule(a, AlarmPlanner.epochMillis(a.at, zone), exact)
+        settings.saveScheduledIds(r.toPersist)
     }
 
     private fun intentFor(id: Int, title: String = "", body: String = "", tri: Boolean = false) =
@@ -82,21 +83,30 @@ class AlarmScheduler(context: Context) {
         fun updateSettings(context: Context, transform: (AlarmSettingsData) -> AlarmSettingsData) {
             val app = context.applicationContext
             appScope.launch {
-                AlarmSettings(app).update(transform)
-                runCatching { AlarmScheduler(app).rescheduleAll() }
+                runCatching {
+                    AlarmSettings(app).update(transform)
+                    AlarmScheduler(app).rescheduleAll()
+                }
             }
         }
 
-        /** Adds [date] to the custom reminders unless its reminder time already passed. */
-        suspend fun addReminder(context: Context, date: LocalDate, now: LocalDateTime = LocalDateTime.now()): ReminderOutcome {
-            val app = context.applicationContext
-            val store = AlarmSettings(app)
-            val outcome = ReminderLogic.outcome(now, date, store.load().rainanTime)
-            if (outcome == ReminderOutcome.ADDED) {
-                store.update { it.copy(customReminders = it.customReminders + date) }
-                AlarmScheduler(app).rescheduleAll(now)
+        /** Adds [date] to the custom reminders unless its reminder time already passed. Runs off the main thread; never throws. */
+        suspend fun addReminder(context: Context, date: LocalDate, now: LocalDateTime = LocalDateTime.now()): ReminderOutcome =
+            withContext(Dispatchers.Default) {
+                try {
+                    val app = context.applicationContext
+                    val store = AlarmSettings(app)
+                    val outcome = ReminderLogic.outcome(now, date, store.load().rainanTime)
+                    if (outcome == ReminderOutcome.ADDED) {
+                        store.update { it.copy(customReminders = it.customReminders + date) }
+                        AlarmScheduler(app).rescheduleAll(now)
+                    }
+                    outcome
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (_: Exception) {
+                    ReminderOutcome.FAILED
+                }
             }
-            return outcome
-        }
     }
 }

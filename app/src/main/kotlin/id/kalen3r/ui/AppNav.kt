@@ -25,7 +25,6 @@ import id.kalen3r.alarm.AlarmScheduler
 import id.kalen3r.alarm.ReminderOutcome
 import id.kalen3r.ui.alarm.AlarmScreen
 import id.kalen3r.ui.alarm.BatteryHelpScreen
-import id.kalen3r.ui.alarm.rememberNotificationRequester
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,7 +76,6 @@ fun AppNav() {
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val requestNotifications = rememberNotificationRequester()
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },
@@ -114,9 +112,14 @@ fun AppNav() {
                     onRemind = { date ->
                         scope.launch {
                             val outcome = AlarmScheduler.addReminder(context, date)
-                            if (outcome == ReminderOutcome.ADDED) requestNotifications()
                             snackbar.showSnackbar(
-                                context.getString(if (outcome == ReminderOutcome.ADDED) R.string.reminder_added else R.string.reminder_past),
+                                context.getString(
+                                    when (outcome) {
+                                        ReminderOutcome.ADDED -> R.string.reminder_added
+                                        ReminderOutcome.PAST -> R.string.reminder_past
+                                        ReminderOutcome.FAILED -> R.string.reminder_failed
+                                    },
+                                ),
                             )
                         }
                     },

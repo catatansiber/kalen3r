@@ -5,19 +5,18 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 /** Rainan switches shown on the Alarm screen. [HARI_RAYA_BESAR] bundles all the big holy-day kinds. */
-enum class RainanGroup(val kinds: Set<RerainanKind>, val label: String) {
-    PURNAMA(setOf(RerainanKind.PURNAMA), "Purnama"),
-    TILEM(setOf(RerainanKind.TILEM), "Tilem"),
-    KAJENG_KLIWON(setOf(RerainanKind.KAJENG_KLIWON), "Kajeng Kliwon"),
+enum class RainanGroup(val kinds: Set<RerainanKind>) {
+    PURNAMA(setOf(RerainanKind.PURNAMA)),
+    TILEM(setOf(RerainanKind.TILEM)),
+    KAJENG_KLIWON(setOf(RerainanKind.KAJENG_KLIWON)),
     HARI_RAYA_BESAR(
         setOf(
             RerainanKind.TUMPEK, RerainanKind.GALUNGAN_KUNINGAN, RerainanKind.SARASWATI_PAGERWESI,
             RerainanKind.NYEPI, RerainanKind.SIWARATRI, RerainanKind.NGEMBAK_GENI,
         ),
-        "Hari raya besar",
     ),
-    ANGGARA_KASIH(setOf(RerainanKind.ANGGARA_KASIH), "Anggara Kasih"),
-    BUDA_CEMENG(setOf(RerainanKind.BUDA_CEMENG), "Buda Cemeng"),
+    ANGGARA_KASIH(setOf(RerainanKind.ANGGARA_KASIH)),
+    BUDA_CEMENG(setOf(RerainanKind.BUDA_CEMENG)),
 }
 
 enum class SoundChoice { TRI_SANDYA, DEFAULT }
@@ -32,6 +31,8 @@ data class AlarmSettingsData(
     val sound: SoundChoice = SoundChoice.DEFAULT,
     val customReminders: Set<LocalDate> = emptySet(),
 ) {
+    val anyAlarmOn: Boolean get() = triSandya.any { it.enabled } || rainanGroups.isNotEmpty() || customReminders.isNotEmpty()
+
     init { require(triSandya.size == 3) { "triSandya needs 3 slots" } }
 
     companion object {
@@ -54,7 +55,7 @@ object AlarmSounds {
         if (saved == SoundChoice.TRI_SANDYA && !hasTriSandyaFile) SoundChoice.DEFAULT else saved
 }
 
-enum class ReminderOutcome { ADDED, PAST }
+enum class ReminderOutcome { ADDED, PAST, FAILED }
 
 object ReminderLogic {
     /** A reminder fires at [rainanTime] on [date]; if that moment is not in the future it is not added. */

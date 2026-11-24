@@ -8,7 +8,6 @@
     <string name="title_detail">Detail Hari</string>
     <string name="placeholder_kalender">Kalender</string>
     <string name="placeholder_cari">Cari Hari Baik</string>
-    <string name="placeholder_alarm">Alarm Hari Raya</string>
     <string name="placeholder_donasi">Dukung Aplikasi Ini</string>
     <string name="back">Kembali</string>
     <string name="prev_month">Bulan sebelumnya</string>
@@ -136,4 +135,12 @@
     <string name="help_other_title">HP lain</string>
     <string name="help_other_body">1. Pengaturan > Aplikasi > Kalender Bali > Baterai, pilih \"Tanpa batasan\".\n2. Jika ada menu \"Mulai otomatis\", \"Peluncuran otomatis\", atau \"Aplikasi latar belakang\", izinkan Kalender Bali.\n3. Kunci kartu aplikasi di daftar aplikasi terbuka, dan matikan mode hemat baterai ekstrem.</string>
     <string name="help_test_note">Setelah selesai, coba satu alarm: atur jam Tri Sandya beberapa menit dari sekarang, kunci layar, dan tunggu notifikasinya.</string>
+    <string name="reminder_failed">Gagal menambah pengingat</string>
+    <string name="alarm_tri_title">Tri Sandya · %1$s</string>
+    <string name="alarm_tri_body">Waktunya Tri Sandya %1$s.</string>
+    <string name="alarm_rainan_title">Hari ini %1$s</string>
+    <string name="alarm_rainan_body">Rerainan hari ini: %1$s</string>
+    <string name="alarm_custom_title">Pengingat</string>
+    <string name="alarm_custom_body">Rerainan: %1$s</string>
+    <string name="alarm_custom_body_empty">Hari yang kamu tandai.</string>
 </resources>

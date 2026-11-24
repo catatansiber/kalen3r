@@ -11,7 +11,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class AlarmPlannerTest {
-    private val planner = AlarmPlanner(BaliCalendar.default)
+    private val planner = AlarmPlanner(BaliCalendar.default, StringsXmlTexts)
     private val start = LocalDate.of(2026, 11, 20)
     private val now = LocalDateTime.of(2026, 11, 20, 0, 0)
     private val noRainan = AlarmSettingsData(rainanGroups = emptySet())
@@ -133,7 +133,7 @@ class AlarmPlannerTest {
         try {
             val plans = listOf("Asia/Makassar", "America/Los_Angeles", "Pacific/Kiritimati").map {
                 TimeZone.setDefault(TimeZone.getTimeZone(it))
-                AlarmPlanner(BaliCalendar.default).plan(now, AlarmSettingsData())
+                AlarmPlanner(BaliCalendar.default, StringsXmlTexts).plan(now, AlarmSettingsData())
             }
             assertEquals(plans[0], plans[1])
             assertEquals(plans[0], plans[2])
