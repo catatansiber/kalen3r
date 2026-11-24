@@ -64,7 +64,7 @@ class LunarTest {
         println("Meeus ch.49 vs USNO: ${rows.size} rows, worst error %.2f min".format(worst))
     }
 
-    /** The elongation function used by tithiOn must cross 0 deg / 180 deg at the USNO instants. */
+    /** The true elongation ([Lunar.elongationDeg], [Lunar.tithiAt]) must cross 0 deg / 180 deg at the USNO instants. */
     @Test
     fun elongationCrossingsMatchUsnoWithinFiveMinutes() {
         var worst = 0.0
@@ -110,26 +110,65 @@ class LunarTest {
     }
 
     @Test
-    fun tithiOnUsesReferenceTimeInWita() {
+    fun meanElongationRuleUsesReferenceTimeInWita() {
         val d = LocalDate.of(2026, 11, 24)
         val ref = d.atTime(Lunar.TITHI_REFERENCE).toInstant(Lunar.WITA)
-        assertEquals(Lunar.tithiOf(Lunar.meanTithiAt(ref)), Lunar.tithiOn(d))
+        assertEquals(Lunar.tithiOf(Lunar.meanTithiAt(ref)), Lunar.tithiOn(d, TithiRule.MEAN_ELONGATION))
+    }
+
+    @Test
+    fun defaultRuleIsPengalantaka() {
+        assertEquals(TithiRule.PENGALANTAKA, Lunar.TITHI_RULE)
+        val d = LocalDate.of(2026, 11, 24)
+        assertEquals(Lunar.tithiOn(d, TithiRule.PENGALANTAKA), Lunar.tithiOn(d))
+    }
+
+    /** peradnya pivot: 2000-01-18 = penanggal 12; ngunalatri when (days since pivot) mod 63 == 1. */
+    @Test
+    fun pengalantakaPivotAndSkipDays() {
+        assertEquals(Tithi(TithiType.PENANGGAL, 12), Lunar.tithiOn(LocalDate.of(2000, 1, 18), TithiRule.PENGALANTAKA))
+        // The pivot is itself a double day (peradnya shows "12/13"), so 13 is skipped on 2000-01-19.
+        assertEquals(Tithi(TithiType.PENANGGAL, 14), Lunar.tithiOn(LocalDate.of(2000, 1, 19), TithiRule.PENGALANTAKA))
+        val pivot = LocalDate.of(2000, 1, 18).toEpochDay()
+        var d = LocalDate.of(2024, 1, 1)
+        while (d.year <= 2035) {
+            val skipped = Lunar.skippedTithiOn(d, TithiRule.PENGALANTAKA) != null
+            assertEquals(Math.floorMod(d.toEpochDay() - pivot, 63L) == 1L, skipped, "$d")
+            d = d.plusDays(1)
+        }
+    }
+
+    /** The documented pengalantaka equals Task 5's best-fit strict 63-day rule (phase 54, n0 19 from 2024-01-01). */
+    @Test
+    fun pengalantakaEqualsTask5FittedStrictRule() {
+        val d0 = LocalDate.of(2024, 1, 1).toEpochDay()
+        var d = LocalDate.of(2024, 1, 1)
+        while (d.year <= 2035) {
+            val x = d.toEpochDay() - d0
+            val strict = (19 + x + Math.floorDiv(x + 54, 63L)).mod(30L).toInt() + 1
+            assertEquals(Lunar.tithiOf(strict), Lunar.tithiOn(d, TithiRule.PENGALANTAKA), "$d")
+            d = d.plusDays(1)
+        }
     }
 
     @Test
     fun tithiOnNeverRepeatsAndSkipsAboutEvery63Days() {
-        var prev = Lunar.tithiOn(LocalDate.of(2023, 12, 31))
-        val skips = mutableListOf<LocalDate>()
-        var d = LocalDate.of(2024, 1, 1)
-        while (d.year <= 2035) {
-            val cur = Lunar.tithiOn(d)
+        for (rule in TithiRule.entries) {
             fun n(t: Tithi) = if (t.type == TithiType.PENANGGAL) t.number else t.number + 15
-            val step = (n(cur) - n(prev) + 30) % 30
-            assertTrue(step == 1 || step == 2, "$d step $step")
-            if (step == 2) skips += d
-            prev = cur; d = d.plusDays(1)
+            var prev = Lunar.tithiOn(LocalDate.of(2023, 12, 31), rule)
+            val skips = mutableListOf<LocalDate>()
+            var d = LocalDate.of(2024, 1, 1)
+            while (d.year <= 2035) {
+                val cur = Lunar.tithiOn(d, rule)
+                val step = (n(cur) - n(prev) + 30) % 30
+                assertTrue(step == 1 || step == 2, "$rule $d step $step")
+                if (step == 2) skips += d
+                prev = cur; d = d.plusDays(1)
+            }
+            val gaps = skips.zipWithNext { a, b -> b.toEpochDay() - a.toEpochDay() }
+            gaps.forEach { assertTrue(it in 62..64, "$rule gap $it") }
+            if (rule == TithiRule.PENGALANTAKA) gaps.forEach { assertEquals(63L, it, "$rule gap") }
         }
-        skips.zipWithNext { a, b -> b.toEpochDay() - a.toEpochDay() }.forEach { assertTrue(it in 62..64, "gap $it") }
     }
 
     @Test
@@ -142,12 +181,30 @@ class LunarTest {
 
     /** Golden anchors (kalenderbali.com, golden/days-*.csv): Purnama, Tilem, Nyepi day and a ngunalatri. */
     @Test
-    fun goldenAnchors() {
-        assertEquals(Tithi(TithiType.PANGELONG, 15), Lunar.tithiOn(LocalDate.of(2024, 1, 10))) // 14 skipped
-        assertEquals(Tithi(TithiType.PENANGGAL, 15), Lunar.tithiOn(LocalDate.of(2024, 1, 25)))
-        assertEquals(Tithi(TithiType.PENANGGAL, 1), Lunar.tithiOn(LocalDate.of(2024, 3, 11))) // Nyepi
-        assertEquals(Tithi(TithiType.PENANGGAL, 4), Lunar.tithiOn(LocalDate.of(2024, 3, 13))) // 3 skipped
-        assertEquals(Tithi(TithiType.PANGELONG, 15), Lunar.tithiOn(LocalDate.of(2026, 11, 9)))
-        assertEquals(Tithi(TithiType.PENANGGAL, 15), Lunar.tithiOn(LocalDate.of(2026, 11, 24)))
+    fun goldenAnchorsBothRules() {
+        for (rule in TithiRule.entries) goldenAnchors(rule)
+    }
+
+    /** Both candidate rules reproduce the raw tithi of all 212 covered golden days. */
+    @Test
+    fun tithiMatchesAllGoldenDaysBothRules() {
+        val days = GoldenLoader.allDays()
+        for (rule in TithiRule.entries) {
+            val bad = days.filter { g ->
+                val off = if (g.raw.getValue("tithiType").lowercase() == "penanggal") 0 else 15
+                val want = g.raw.getValue("tithiNo").split("/").map { Lunar.tithiOf(it.trim().toInt() + off) }
+                Lunar.tithiOn(g.date, rule) !in want
+            }.map { it.date }
+            assertTrue(bad.isEmpty(), "$rule mismatches on $bad")
+        }
+    }
+
+    private fun goldenAnchors(rule: TithiRule) {
+        assertEquals(Tithi(TithiType.PANGELONG, 15), Lunar.tithiOn(LocalDate.of(2024, 1, 10), rule), "$rule") // 14 skipped
+        assertEquals(Tithi(TithiType.PENANGGAL, 15), Lunar.tithiOn(LocalDate.of(2024, 1, 25), rule), "$rule")
+        assertEquals(Tithi(TithiType.PENANGGAL, 1), Lunar.tithiOn(LocalDate.of(2024, 3, 11), rule), "$rule") // Nyepi
+        assertEquals(Tithi(TithiType.PENANGGAL, 4), Lunar.tithiOn(LocalDate.of(2024, 3, 13), rule), "$rule") // 3 skipped
+        assertEquals(Tithi(TithiType.PANGELONG, 15), Lunar.tithiOn(LocalDate.of(2026, 11, 9), rule), "$rule")
+        assertEquals(Tithi(TithiType.PENANGGAL, 15), Lunar.tithiOn(LocalDate.of(2026, 11, 24), rule), "$rule")
     }
 }

@@ -9,6 +9,18 @@ import kotlin.math.sin
 
 enum class TithiType { PENANGGAL, PANGELONG }
 
+/**
+ * Candidate rules that assign one tithi to a civil day. Both reproduce all 212 golden days; see
+ * calendar-core/docs/lunar-report.md ("Task 6: discrimination study") for why [PENGALANTAKA] is the default.
+ */
+enum class TithiRule {
+    /** Balinese arithmetic pengalantaka (Eka Sungsang ke Paing): one tithi skipped every 63 days exactly. */
+    PENGALANTAKA,
+
+    /** Task 5 rule: mean elongation (Meeus 47.2) at [Lunar.TITHI_REFERENCE] WITA; skips every ~62.9 days. */
+    MEAN_ELONGATION,
+}
+
 /** A tithi (lunar day). number is 1..15 within its half; Purnama = PENANGGAL 15, Tilem = PANGELONG 15. */
 data class Tithi(val type: TithiType, val number: Int) {
     init {
@@ -20,30 +32,51 @@ data class Tithi(val type: TithiType, val number: Int) {
 }
 
 /**
- * Raw (uncorrected) astronomical lunar computations.
+ * Raw (uncorrected) lunar computations.
  *
  * - Phase instants: Meeus, Astronomical Algorithms 2nd ed., ch. 49 (all periodic and additional terms).
- * - Elongation for tithi: Moon longitude from ch. 47 (table 47.A longitude terms, plus A1/A2/L'-F
- *   additive terms) minus Sun apparent longitude from ch. 25 (low precision). Nutation is common to both
- *   longitudes and cancels in the difference, so it is omitted.
+ * - True elongation ([elongationDeg], [tithiAt]): Moon longitude from ch. 47 (table 47.A longitude terms,
+ *   plus A1/A2/L'-F additive terms) minus Sun apparent longitude from ch. 25 (low precision). Nutation is
+ *   common to both longitudes and cancels in the difference, so it is omitted. Used for astronomy only
+ *   (checked against USNO phase times), NOT for the tithi of a civil day.
  * - Time scale: Meeus works in TT; UTC = TT - deltaT (Espenak-Meeus polynomial for 2005..2050).
  *
- * The tithi of a civil day ([tithiOn]) is floor(D / 12 deg) + 1, where D is the MEAN elongation (Meeus 47.2)
- * at [TITHI_REFERENCE] WITA (UTC+8) on that day. Mean elongation advances 12.19 deg/day, so a day never
- * repeats a tithi and one tithi is skipped (ngunalatri) about every 62.9 days, like the Balinese
- * arithmetic calendar. With the true elongation the best reference hour still mismatched 55 of the 212
- * golden days; with the mean elongation, 0. See calendar-core/docs/lunar-report.md. The true elongation
- * ([elongationDeg], [tithiAt]) is kept for astronomy and is checked against USNO phase times.
- * Remaining differences from the official calendar are the correction table's job (Task 7).
+ * The tithi of a civil day ([tithiOn]) follows [TITHI_RULE], the single switch point:
+ * - [TithiRule.PENGALANTAKA] (default): the Balinese arithmetic count, no astronomy and no fitted constant.
+ *   Day count from [PENGALANTAKA_PIVOT] plus one extra tithi every 63 days.
+ * - [TithiRule.MEAN_ELONGATION] (Task 5): floor(D / 12 deg) + 1 with D the MEAN elongation (Meeus 47.2)
+ *   at [TITHI_REFERENCE] WITA. D advances 12.19 deg/day, so it skips a tithi every ~62.9 days.
+ * Both rules match all 212 golden days. They drift apart outside the golden ranges (5 days in 2025 growing
+ * to 36 in 2035) and the one published fact found that separates them (Tilem 2025-05-27) agrees with the
+ * pengalantaka; see calendar-core/docs/lunar-report.md. With the true elongation the best reference hour
+ * still mismatched 55 of the 212 golden days. Remaining differences from the official calendar are the
+ * correction table's job (Task 7).
  */
 object Lunar {
     val WITA: ZoneOffset = ZoneOffset.ofHours(8)
 
+    /** The rule [tithiOn] uses by default. Change only together with docs/lunar-report.md. */
+    val TITHI_RULE: TithiRule = TithiRule.PENGALANTAKA
+
     /**
-     * Reference time of day (WITA) at which a day's (mean-elongation) tithi is evaluated. Centre of the
-     * 12:45..13:03 window that gives 0 golden mismatches; see calendar-core/docs/lunar-report.md.
+     * Reference time of day (WITA) for [TithiRule.MEAN_ELONGATION]. A FITTED constant, not a physical
+     * time: the centre of the 12:45..13:03 window that gives 0 mismatches on the 212 golden days (either
+     * edge is 9 minutes away). The strict 63-day pengalantaka fits the same 212 days equally well with no
+     * fitted constant, and the Task 6 discrimination study made it the default; see docs/lunar-report.md.
      */
     val TITHI_REFERENCE: LocalTime = LocalTime.of(12, 54)
+
+    /**
+     * Pengalantaka pivot: 2000-01-18 is penanggal 12 (sasih Kapitu, Saka 1921), and a ngunalatri (one
+     * tithi skipped) falls on every day whose distance from the pivot is 1 mod 63. Source:
+     * peradnya, balinese-date-js-lib, src/internal/Pivot.ts (PIVOT_2000) and src/BalineseDate.ts
+     * (_F_CALC_SASIH_DAY: dayTotal = sasihDay + dayDiff + ceil(dayDiff / 63)), "Pengalantaka Eka Sungsang
+     * ke Paing", used there from 2000-01-06. Earlier dates follow another pengalantaka (ke Pon) that is
+     * not modelled here; dates before 2000 are extrapolated and unverified.
+     */
+    val PENGALANTAKA_PIVOT: LocalDate = LocalDate.of(2000, 1, 18)
+    private const val PENGALANTAKA_PIVOT_TITHI = 12
+    private const val NGUNALATRI_DAYS = 63L
 
     private const val DEG = Math.PI / 180.0
     private const val J2000 = 2451545.0
@@ -205,18 +238,30 @@ object Lunar {
     /** Tithi number 1..30 by MEAN elongation at instant i: floor(D / 12 deg) + 1. */
     fun meanTithiAt(i: Instant): Int = (floor(meanElongationDeg(i) / 12.0).toInt()).coerceIn(0, 29) + 1
 
-    /** Raw tithi of a civil day: mean-elongation tithi at [TITHI_REFERENCE] WITA on that date. */
-    fun tithiOn(date: LocalDate): Tithi = tithiOf(meanTithiAt(date.atTime(TITHI_REFERENCE).toInstant(WITA)))
+    /** Tithi number 1..30 of a civil day under the pengalantaka (see [PENGALANTAKA_PIVOT]). */
+    fun pengalantakaTithiNumber(date: LocalDate): Int {
+        val dd = date.toEpochDay() - PENGALANTAKA_PIVOT.toEpochDay()
+        val skips = -Math.floorDiv(-dd, NGUNALATRI_DAYS) // ceil(dd / 63), also for dd < 0
+        return (PENGALANTAKA_PIVOT_TITHI - 1 + dd + skips).mod(30L).toInt() + 1
+    }
+
+    /** Tithi number 1..30 of a civil day under [rule]. */
+    fun tithiNumberOn(date: LocalDate, rule: TithiRule = TITHI_RULE): Int = when (rule) {
+        TithiRule.PENGALANTAKA -> pengalantakaTithiNumber(date)
+        TithiRule.MEAN_ELONGATION -> meanTithiAt(date.atTime(TITHI_REFERENCE).toInstant(WITA))
+    }
+
+    /** Raw tithi of a civil day under [rule] (default [TITHI_RULE]). */
+    fun tithiOn(date: LocalDate, rule: TithiRule = TITHI_RULE): Tithi = tithiOf(tithiNumberOn(date, rule))
 
     /**
      * The tithi skipped (ngunalatri) between the previous day and [date], or null if none. A skipped
      * PENANGGAL 15 / PANGELONG 15 means the raw output has no Purnama/Tilem day in that half-month;
      * how the official calendar labels such days is left to the correction table (Task 7).
      */
-    fun skippedTithiOn(date: LocalDate): Tithi? {
-        fun n(t: Tithi) = if (t.type == TithiType.PENANGGAL) t.number else t.number + 15
-        val prev = n(tithiOn(date.minusDays(1)))
-        val cur = n(tithiOn(date))
+    fun skippedTithiOn(date: LocalDate, rule: TithiRule = TITHI_RULE): Tithi? {
+        val prev = tithiNumberOn(date.minusDays(1), rule)
+        val cur = tithiNumberOn(date, rule)
         return if ((cur - prev + 30) % 30 == 2) tithiOf(prev % 30 + 1) else null
     }
 }

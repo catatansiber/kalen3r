@@ -72,6 +72,32 @@ object GoldenLoader {
         else -> error("unknown triwara '$s'")
     }
 
+    /**
+     * kalenderbali.com sasih names (site spelling, e.g. Kelima, Kenam, Kesanga, Kedasa, Jiyestha, Sadha)
+     * to [SasihInfo]. A "Mala " / "Nampih " prefix marks the intercalary month (e.g. "Mala Sadha").
+     */
+    fun sasih(s: String): SasihInfo {
+        val n = s.trim().lowercase()
+        val nampih = n.startsWith("mala ") || n.startsWith("nampih ")
+        val base = n.substringAfter(' ').takeIf { nampih } ?: n
+        val sasih = when (base) {
+            "kasa" -> Sasih.KASA
+            "karo" -> Sasih.KARO
+            "katiga", "ketiga" -> Sasih.KATIGA
+            "kapat", "kepat" -> Sasih.KAPAT
+            "kalima", "kelima" -> Sasih.KALIMA
+            "kanem", "kenam" -> Sasih.KANEM
+            "kapitu", "kepitu" -> Sasih.KAPITU
+            "kawolu", "kewulu", "kawulu", "kewolu" -> Sasih.KAWOLU
+            "kasanga", "kesanga", "kanawa" -> Sasih.KANAWA
+            "kadasa", "kedasa" -> Sasih.KADASA
+            "desta", "destha", "jiyestha", "jyestha", "dhesta" -> Sasih.DESTA
+            "sada", "sadha" -> Sasih.SADA
+            else -> error("unknown sasih '$s'")
+        }
+        return SasihInfo(sasih, nampih)
+    }
+
     private fun normWuku(s: String) = when (val n = s.lowercase()) {
         "dunggulan" -> "dungulan"
         else -> n

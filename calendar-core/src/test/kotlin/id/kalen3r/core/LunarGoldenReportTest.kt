@@ -113,9 +113,11 @@ class LunarGoldenReportTest {
             val t = LocalTime.of(h, 0)
             candidates["mean elongation at %02d:00".format(h)] = { d -> meanAtWita(d, t) }
         }
-        candidates["tithiOn (TITHI_REFERENCE=${Lunar.TITHI_REFERENCE})"] = { d ->
-            Lunar.tithiOn(d).let { if (it.type == TithiType.PENANGGAL) it.number else it.number + 15 }
+        candidates["mean-elongation rule (TITHI_REFERENCE=${Lunar.TITHI_REFERENCE})"] = { d ->
+            Lunar.tithiNumberOn(d, TithiRule.MEAN_ELONGATION)
         }
+        candidates["pengalantaka rule"] = { d -> Lunar.tithiNumberOn(d, TithiRule.PENGALANTAKA) }
+        candidates["tithiOn (TITHI_RULE=${Lunar.TITHI_RULE})"] = { d -> Lunar.tithiNumberOn(d) }
 
         line("")
         line("candidate | total | " + byRange.joinToString(" | ") { "${it.first.from}..${it.first.to}" })
@@ -151,38 +153,49 @@ class LunarGoldenReportTest {
         line("")
         line("diagnostic: strict 63-day skip rule, best fit ($bestDesc): tithi mismatches=$best of ${rows.size}")
 
-        // Outside the golden ranges (no official data): how far tithiOn drifts from that strict 63-day rule,
-        // and where tithiOn's Purnama/Tilem fall against the USNO astronomical WITA date.
+        // Outside the golden ranges (no official data): how far the mean-elongation rule drifts from the
+        // strict 63-day rule, and where each rule's Purnama/Tilem fall against the USNO astronomical WITA date.
         val bp = bestDesc.substringAfter("phase=").substringBefore(" ").toLong()
         val bn = bestDesc.substringAfter("n0=").toLong()
         fun strict(d: LocalDate): Int { val x = d.toEpochDay() - d0; return (bn + x + Math.floorDiv(x + bp, 63L)).mod(30L).toInt() + 1 }
-        fun on(d: LocalDate) = Lunar.tithiOn(d).let { if (it.type == TithiType.PENANGGAL) it.number else it.number + 15 }
-        val usno = LunarGoldenReportTest::class.java.getResourceAsStream("/golden/golden2/moon-phases.csv")!!
-            .bufferedReader().readLines().drop(1).filter { it.isNotBlank() }.map { it.split(",") }
+        fun mean(d: LocalDate) = Lunar.tithiNumberOn(d, TithiRule.MEAN_ELONGATION)
+        fun on(d: LocalDate) = Lunar.tithiNumberOn(d)
+        for (d in generateSequence(LocalDate.of(2024, 1, 1)) { it.plusDays(1) }.takeWhile { it.year <= 2035 }) {
+            check(strict(d) == Lunar.tithiNumberOn(d, TithiRule.PENGALANTAKA)) { "fitted strict rule != pengalantaka on $d" }
+        }
         line("")
-        line("year | days tithiOn != strict-63 rule | Purnama/Tilem vs USNO WITA date: same / 1 day earlier / 1 day later / other")
+        line("year | days mean-elongation != strict-63 (= pengalantaka) | Purnama/Tilem vs USNO WITA date (mean rule, then pengalantaka): same / 1 day earlier / 1 day later / other")
         for (y in 2024..2035) {
             var diff = 0
             var dd = LocalDate.of(y, 1, 1)
-            while (dd.year == y) { if (on(dd) != strict(dd)) diff++; dd = dd.plusDays(1) }
-            val other = mutableListOf<String>()
-            val offs = usno.filter { it[2].startsWith("$y-") }.map { (ph, _, wita) ->
-                val astro = LocalDate.parse(wita)
-                val target = if (ph == "full") 15 else 30
-                val ours = (-3L..3L).map { astro.plusDays(it) }.firstOrNull { on(it) == target }
-                val off = if (ours == null) 99 else (ours.toEpochDay() - astro.toEpochDay()).toInt()
-                if (off !in -1..1) other += "$ph $wita:" + (if (ours == null) "tithi ${if (target == 15) 15 else 30} skipped" else "offset $off")
-                off
-            }
-            line("$y | $diff | ${offs.count { it == 0 }} / ${offs.count { it == -1 }} / ${offs.count { it == 1 }} / ${offs.count { it !in -1..1 }} $other")
+            while (dd.year == y) { if (mean(dd) != strict(dd)) diff++; dd = dd.plusDays(1) }
+            val usnoLine = listOf<(LocalDate) -> Int>({ mean(it) }, { on(it) }).joinToString(" || ") { f -> usnoOffsets(y, f) }
+            line("$y | $diff | $usnoLine")
         }
 
         line("")
         line("tithiOn mismatches:")
-        mismatchList(rows) { d -> Lunar.tithiOn(d).let { if (it.type == TithiType.PENANGGAL) it.number else it.number + 15 } }
-            .forEach { line("  $it") }
+        mismatchList(rows) { d -> Lunar.tithiNumberOn(d) }.forEach { line("  $it") }
 
         java.io.File("build/lunar-golden-report.txt").writeText(out.toString())
         assertTrue(rows.isNotEmpty())
+    }
+
+    private val usno by lazy {
+        LunarGoldenReportTest::class.java.getResourceAsStream("/golden/golden2/moon-phases.csv")!!
+            .bufferedReader().readLines().drop(1).filter { it.isNotBlank() }.map { it.split(",") }
+    }
+
+    private fun usnoOffsets(y: Int, on: (LocalDate) -> Int): String {
+        val other = mutableListOf<String>()
+        val offs = usno.filter { it[2].startsWith("$y-") }.map { (ph, _, wita) ->
+            val astro = LocalDate.parse(wita)
+            val target = if (ph == "full") 15 else 30
+            val ours = (-3L..3L).map { astro.plusDays(it) }.firstOrNull { on(it) == target }
+            val off = if (ours == null) 99 else (ours.toEpochDay() - astro.toEpochDay()).toInt()
+            if (off !in -1..1) other += "$ph $wita:" + (if (ours == null) "tithi ${if (target == 15) 15 else 30} skipped" else "offset $off")
+            off
+        }
+        return "${offs.count { it == 0 }} / ${offs.count { it == -1 }} / ${offs.count { it == 1 }} / ${offs.count { it !in -1..1 }} $other"
     }
 }
