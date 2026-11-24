@@ -1,9 +1,7 @@
 package id.kalen3r.ui
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -26,7 +24,6 @@ import id.kalen3r.alarm.ReminderOutcome
 import id.kalen3r.ui.alarm.AlarmScreen
 import id.kalen3r.ui.alarm.BatteryHelpScreen
 import kotlinx.coroutines.launch
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -40,6 +37,7 @@ import androidx.navigation.navArgument
 import id.kalen3r.R
 import id.kalen3r.ui.cari.CariScreen
 import id.kalen3r.ui.detail.DetailScreen
+import id.kalen3r.ui.donasi.DonasiScreen
 import id.kalen3r.ui.month.MonthScreen
 
 data class TabSpec(
@@ -128,14 +126,7 @@ fun AppNav() {
             composable(AppRoutes.CARI) { CariScreen { nav.navigate(AppRoutes.detail(it.toString())) } }
             composable(AppRoutes.ALARM) { AlarmScreen(onOpenHelp = { nav.navigate(AppRoutes.ALARM_HELP) }) }
             composable(AppRoutes.ALARM_HELP) { BatteryHelpScreen(onBack = { nav.popBackStack() }) }
-            composable(AppRoutes.DONASI) { Placeholder(R.string.placeholder_donasi) }
+            composable(AppRoutes.DONASI) { DonasiScreen() }
         }
-    }
-}
-
-@Composable
-private fun Placeholder(@StringRes title: Int) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(stringResource(title))
     }
 }

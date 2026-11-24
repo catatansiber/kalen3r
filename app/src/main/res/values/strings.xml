@@ -8,7 +8,6 @@
     <string name="title_detail">Detail Hari</string>
     <string name="placeholder_kalender">Kalender</string>
     <string name="placeholder_cari">Cari Hari Baik</string>
-    <string name="placeholder_donasi">Dukung Aplikasi Ini</string>
     <string name="back">Kembali</string>
     <string name="prev_month">Bulan sebelumnya</string>
     <string name="next_month">Bulan berikutnya</string>
@@ -143,4 +142,18 @@
     <string name="alarm_custom_title">Pengingat</string>
     <string name="alarm_custom_body">Rerainan: %1$s</string>
     <string name="alarm_custom_body_empty">Hari yang kamu tandai.</string>
+
+    <string name="donasi_title">Donasi</string>
+    <string name="donasi_headline">Suksma sudah memakai aplikasi ini</string>
+    <string name="donasi_body">Aplikasi ini gratis dan tanpa iklan. Donasi membantu menutup biaya menyusun dan memperbarui data kalender setiap tahun. Donasi bersifat sukarela, dan semua fitur tetap terbuka untuk semua orang.</string>
+    <string name="donasi_qris_description">Kode QRIS untuk donasi</string>
+    <string name="donasi_penerima"></string>
+    <string name="donasi_penerima_label">Penerima: %1$s</string>
+    <string name="donasi_steps">1. Buka aplikasi e-wallet atau m-banking.\n2. Pilih Scan / Bayar QRIS.\n3. Pindai kode ini lalu isi nominal sesukamu.</string>
+    <string name="donasi_share">Bagikan gambar QR</string>
+    <string name="donasi_share_chooser">Bagikan gambar QR</string>
+    <string name="donasi_share_unavailable">Tidak ada aplikasi untuk berbagi</string>
+    <string name="donasi_missing_title">QRIS segera hadir</string>
+    <string name="donasi_missing_body">Terima kasih atas niatmu.</string>
+    <string name="donasi_footer">Donasi tidak mengubah fitur apa pun. Kami tidak menyimpan data pembayaran.</string>
 </resources>
