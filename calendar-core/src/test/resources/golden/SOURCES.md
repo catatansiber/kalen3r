@@ -1,6 +1,6 @@
 # Golden data sources
 
-Collection date: 2026-11-24. Status: INCOMPLETE. See "Blocked" below.
+Collection date: 2026-11-24. Status: PARTIAL (212 days). See "Blocked" below.
 
 ## Source 1: kalenderbali.com (primary, owner-permitted for date facts only)
 
@@ -15,9 +15,11 @@ Collection date: 2026-11-24. Status: INCOMPLETE. See "Blocked" below.
 
 After the first one or two page loads in a browser session, the site answers with a "One moment, please... Please wait while your request is being verified" interstitial. Early loads cleared by themselves. From 2024-07 on, the grid never appeared within 60 s in three attempts. I did not try to get around it (no fresh identities, stealth or challenge solving) and stopped.
 
-Collected so far: raw month data for 2024-01 .. 2024-06 only (182 days). These days were checked against the 210-day cycle anchored at 2026-11-01 with zero mismatches (wuku, saptawara, pancawara, triwara). They are not committed as CSV because `verify.mjs` needs the full 2024-2035 range. Months 2024-07 .. 2035-12 (138 months) are missing, and so are `days-<year>.csv` for all years.
+Covered (see `COVERAGE.md` and `coverage.json`): 2024-01-01 to 2024-06-30 and 2026-11-01 to 2026-11-30, 212 days. These pass `verify.mjs` (cycle anchored at 2026-11-01, consecutive saptawara/pancawara/wuku, Caka change on Nyepi, Purnama/Tilem flags match tithi 15).
 
-To finish: the owner can allow-list the collector or provide an export, then run `node scripts/golden/collect.mjs --cache <dir>` and `node scripts/golden/verify.mjs`.
+**Gap: 138 months (2024-07 to 2026-10 and 2026-12 to 2035-12) are missing because the site's bot verification stopped clearing.** The remaining golden data needs owner action (an export or pasted data from the site) or a later retry by the owner: `node scripts/golden/collect.mjs --cache <dir>`, then update `coverage.json`, `COVERAGE.md` and run `verify.mjs` and `compare.mjs`.
+
+The site spells wuku 11 as `Dunggulan` (the design spec writes Dungulan).
 
 ## Source 2: independent sources (`golden2/`)
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Sanity checks over golden days-<year>.csv (2024..2035). Exit code 1 on any hard failure.
+// Sanity checks over golden days-<year>.csv, only within the ranges declared in coverage.json. Exit code 1 on any hard failure.
 // Usage: node verify.mjs [goldenDir]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -13,19 +13,19 @@ const SAPTA_URIP = [5, 4, 3, 7, 8, 6, 9];
 const PANCA = ['Paing', 'Pon', 'Wage', 'Keliwon', 'Umanis']; // site spelling; "Kliwon" accepted too
 const PANCA_URIP = [9, 7, 4, 8, 5];
 const TRI = ['Pasah', 'Beteng', 'Kajeng'];
-const WUKU = ['sinta','landep','ukir','kulantir','tolu','gumbreg','wariga','warigadean','julungwangi','sungsang','dungulan','kuningan','langkir','medangsia','pujut','pahang','krulut','merakih','tambir','medangkungan','matal','uye','menail','prangbakat','bala','ugu','wayang','kulawu','dukut','watugunung'];
+const WUKU = ['sinta','landep','ukir','kulantir','tolu','gumbreg','wariga','warigadean','julungwangi','sungsang','dunggulan','kuningan','langkir','medangsia','pujut','pahang','krulut','merakih','tambir','medangkungan','matal','uye','menail','prangbakat','bala','ugu','wayang','kulawu','dukut','watugunung'];
 const norm = (s) => (s === 'Kliwon' ? 'Keliwon' : s);
 
 let failures = 0;
 const fail = (m) => { if (failures++ < 40) console.error('FAIL', m); };
 const day = (iso) => Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)) / 864e5;
+const iso = (d) => new Date(d * 864e5).toISOString().slice(0, 10);
 const ANCHOR = day('2026-11-01');
 
+const coverage = JSON.parse(fs.readFileSync(path.join(dir, 'coverage.json'), 'utf8'));
 const rows = [];
-for (let y = 2024; y <= 2035; y++) {
-  const f = path.join(dir, `days-${y}.csv`);
-  if (!fs.existsSync(f)) { fail('missing ' + f); continue; }
-  const lines = fs.readFileSync(f, 'utf8').trimEnd().split('\n');
+for (const f of fs.readdirSync(dir).filter((n) => /^days-\d{4}\.csv$/.test(n)).sort()) {
+  const lines = fs.readFileSync(path.join(dir, f), 'utf8').trimEnd().split('\n');
   if (lines[0] !== HEADER) fail(`${f}: bad header`);
   for (const l of lines.slice(1)) {
     const c = l.split(',');
@@ -34,14 +34,15 @@ for (let y = 2024; y <= 2035; y++) {
     rows.push({ date, wuku, sapta, panca: norm(panca), tri, catur, asta, sanga, dasa, urip, tType, tNo, sasih, caka, flags: flags ? flags.split(';') : [] });
   }
 }
+rows.sort((x, y) => x.date.localeCompare(y.date));
 
-// 1. contiguous, no duplicates, full range
-const first = day('2024-01-01'), last = day('2035-12-31');
-if (rows.length !== last - first + 1) fail(`row count ${rows.length} != ${last - first + 1}`);
-rows.forEach((r, i) => {
-  if (!/^\d{4}-\d\d-\d\d$/.test(r.date)) return fail('bad date ' + r.date);
-  if (day(r.date) !== first + i) fail(`date gap/dup/order at row ${i}: ${r.date}`);
-});
+// 1. rows must cover exactly the declared ranges: no gaps, no duplicates, nothing outside
+const expectedDates = [];
+for (const rg of coverage) for (let d = day(rg.from); d <= day(rg.to); d++) expectedDates.push(iso(d));
+if (rows.length !== expectedDates.length) fail(`row count ${rows.length} != declared coverage ${expectedDates.length}`);
+rows.forEach((r, i) => { if (r.date !== expectedDates[i]) fail(`row ${i}: ${r.date} expected ${expectedDates[i]} (gap, duplicate or undeclared date)`); });
+// start index of each covered range, so "consecutive day" checks do not span a gap
+const rangeStart = new Set(coverage.map((rg) => rg.from));
 
 for (let i = 0; i < rows.length; i++) {
   const r = rows[i];
@@ -59,7 +60,7 @@ for (let i = 0; i < rows.length; i++) {
   for (const k of ['catur', 'asta', 'sanga', 'dasa', 'sasih', 'caka', 'tType', 'tNo']) if (!r[k]) fail(`${r.date} empty ${k}`);
   if (!['penanggal', 'pangelong'].includes(r.tType)) fail(`${r.date} tithiType ${r.tType}`);
   // 3. consecutive days: sapta, panca, wuku step
-  if (i > 0) {
+  if (i > 0 && !rangeStart.has(r.date)) {
     const p = rows[i - 1];
     if (SAPTA.indexOf(r.sapta) !== (SAPTA.indexOf(p.sapta) + 1) % 7) fail(`${r.date} saptawara not consecutive`);
     if (PANCA.indexOf(r.panca) !== (PANCA.indexOf(p.panca) + 1) % 5) fail(`${r.date} pancawara not consecutive`);
@@ -74,9 +75,9 @@ for (let i = 0; i < rows.length; i++) {
 // 4. named anchors
 const get = (dt) => rows.find((r) => r.date === dt);
 const a = get('2026-11-01');
-if (!a || a.wuku !== '1.sinta' || a.sapta !== 'Redite' || a.panca !== 'Paing' || a.tri !== 'Pasah' || a.urip !== '5+9') fail('anchor 2026-11-01 wrong: ' + JSON.stringify(a));
+if (a && ( a.wuku !== '1.sinta' || a.sapta !== 'Redite' || a.panca !== 'Paing' || a.tri !== 'Pasah' || a.urip !== '5+9')) fail('anchor 2026-11-01 wrong: ' + JSON.stringify(a));
 const b = get('2026-11-04');
-if (!b || b.panca !== 'Keliwon') fail('anchor 2026-11-04 not Kliwon');
+if (b && b.panca !== 'Keliwon') fail('anchor 2026-11-04 not Kliwon');
 if (a && a.tType !== 'pangelong') fail('2026-11-01 expected pangelong');
 
 // 5. tithi/moon flags (hard): purnama == penanggal 15, tilem == pangelong 15

@@ -1,0 +1,183 @@
+date,wuku,saptawara,pancawara,triwara,caturwara,astawara,sangawara,dasawara,urip,tithiType,tithiNo,sasih,caka,flags
+2024-01-01,3.ukir,Soma,Paing,Pasah,Menala,Uma,Nohan,Duka,4+9,pangelong,5,Kepitu,1945,
+2024-01-02,3.ukir,Anggara,Pon,Beteng,Sri,Sri,Ogan,Pandita,3+7,pangelong,6,Kepitu,1945,
+2024-01-03,3.ukir,Buda,Wage,Kajeng,Laba,Indra,Erangan,Pati,7+4,pangelong,7,Kepitu,1945,
+2024-01-04,3.ukir,Wraspati,Keliwon,Pasah,Jaya,Guru,Urungan,Manusa,8+8,pangelong,8,Kepitu,1945,
+2024-01-05,3.ukir,Sukra,Umanis,Beteng,Menala,Yama,Tulus,Pati,6+5,pangelong,9,Kepitu,1945,
+2024-01-06,3.ukir,Saniscara,Paing,Kajeng,Sri,Ludra,Dadi,Dewa,9+9,pangelong,10,Kepitu,1945,
+2024-01-07,4.kulantir,Redite,Pon,Pasah,Laba,Brahma,Dangu,Suka,5+7,pangelong,11,Kepitu,1945,
+2024-01-08,4.kulantir,Soma,Wage,Beteng,Jaya,Kala,Jangur,Dewa,4+4,pangelong,12,Kepitu,1945,
+2024-01-09,4.kulantir,Anggara,Keliwon,Kajeng,Menala,Uma,Gigis,Pati,3+8,pangelong,13,Kepitu,1945,Hari Siwa Ratri;anggara-kasih;kajeng-kliwon
+2024-01-10,4.kulantir,Buda,Umanis,Pasah,Sri,Sri,Nohan,Suka,7+5,pangelong,15,Kepitu,1945,tilem
+2024-01-11,4.kulantir,Wraspati,Paing,Beteng,Laba,Indra,Ogan,Raja,8+9,penanggal,1,Kewulu,1945,
+2024-01-12,4.kulantir,Sukra,Pon,Kajeng,Jaya,Guru,Erangan,Duka,6+7,penanggal,2,Kewulu,1945,
+2024-01-13,4.kulantir,Saniscara,Wage,Pasah,Menala,Yama,Urungan,Duka,9+4,penanggal,3,Kewulu,1945,
+2024-01-14,5.tolu,Redite,Keliwon,Beteng,Sri,Ludra,Tulus,Duka,5+8,penanggal,4,Kewulu,1945,
+2024-01-15,5.tolu,Soma,Umanis,Kajeng,Laba,Brahma,Dadi,Raksasa,4+5,penanggal,5,Kewulu,1945,
+2024-01-16,5.tolu,Anggara,Paing,Pasah,Jaya,Kala,Dangu,Suka,3+9,penanggal,6,Kewulu,1945,
+2024-01-17,5.tolu,Buda,Pon,Beteng,Menala,Uma,Jangur,Sri,7+7,penanggal,7,Kewulu,1945,
+2024-01-18,5.tolu,Wraspati,Wage,Kajeng,Sri,Sri,Gigis,Suka,8+4,penanggal,8,Kewulu,1945,
+2024-01-19,5.tolu,Sukra,Keliwon,Pasah,Laba,Indra,Nohan,Sri,6+8,penanggal,9,Kewulu,1945,
+2024-01-20,5.tolu,Saniscara,Umanis,Beteng,Jaya,Guru,Ogan,Sri,9+5,penanggal,10,Kewulu,1945,
+2024-01-21,6.gumbreg,Redite,Paing,Kajeng,Menala,Yama,Erangan,Sri,5+9,penanggal,11,Kewulu,1945,
+2024-01-22,6.gumbreg,Soma,Pon,Pasah,Sri,Ludra,Urungan,Pati,4+7,penanggal,12,Kewulu,1945,
+2024-01-23,6.gumbreg,Anggara,Wage,Beteng,Laba,Brahma,Tulus,Raja,3+4,penanggal,13,Kewulu,1945,
+2024-01-24,6.gumbreg,Buda,Keliwon,Kajeng,Jaya,Kala,Dadi,Manuh,7+8,penanggal,14,Kewulu,1945,kajeng-kliwon
+2024-01-25,6.gumbreg,Wraspati,Umanis,Pasah,Menala,Uma,Dangu,Duka,8+5,penanggal,15,Kewulu,1945,purnama
+2024-01-26,6.gumbreg,Sukra,Paing,Beteng,Sri,Sri,Jangur,Manuh,6+9,pangelong,1,Kewulu,1945,
+2024-01-27,6.gumbreg,Saniscara,Pon,Kajeng,Laba,Indra,Gigis,Manusa,9+7,pangelong,2,Kewulu,1945,
+2024-01-28,7.wariga,Redite,Wage,Pasah,Jaya,Guru,Nohan,Raksasa,5+4,pangelong,3,Kewulu,1945,
+2024-01-29,7.wariga,Soma,Keliwon,Beteng,Menala,Yama,Ogan,Suka,4+8,pangelong,4,Kewulu,1945,
+2024-01-30,7.wariga,Anggara,Umanis,Kajeng,Sri,Ludra,Erangan,Dewa,3+5,pangelong,5,Kewulu,1945,
+2024-01-31,7.wariga,Buda,Paing,Pasah,Laba,Brahma,Urungan,Manusa,7+9,pangelong,6,Kewulu,1945,
+2024-02-01,7.wariga,Wraspati,Pon,Beteng,Jaya,Kala,Tulus,Manuh,8+7,pangelong,7,Kewulu,1945,
+2024-02-02,7.wariga,Sukra,Wage,Kajeng,Menala,Uma,Dadi,Pandita,6+4,pangelong,8,Kewulu,1945,
+2024-02-03,7.wariga,Saniscara,Keliwon,Pasah,Sri,Sri,Dangu,Raja,9+8,pangelong,9,Kewulu,1945,Tumpek Uduh/Pengatag
+2024-02-04,8.warigadean,Redite,Umanis,Beteng,Laba,Indra,Jangur,Pandita,5+5,pangelong,10,Kewulu,1945,
+2024-02-05,8.warigadean,Soma,Paing,Kajeng,Jaya,Guru,Gigis,Duka,4+9,pangelong,11,Kewulu,1945,
+2024-02-06,8.warigadean,Anggara,Pon,Pasah,Menala,Yama,Nohan,Pandita,3+7,pangelong,12,Kewulu,1945,
+2024-02-07,8.warigadean,Buda,Wage,Beteng,Sri,Ludra,Ogan,Pati,7+4,pangelong,13,Kewulu,1945,
+2024-02-08,8.warigadean,Wraspati,Keliwon,Kajeng,Laba,Brahma,Erangan,Manusa,8+8,pangelong,14,Kewulu,1945,kajeng-kliwon
+2024-02-09,8.warigadean,Sukra,Umanis,Pasah,Jaya,Kala,Urungan,Pati,6+5,pangelong,15,Kewulu,1945,tilem
+2024-02-10,8.warigadean,Saniscara,Paing,Beteng,Menala,Uma,Tulus,Dewa,9+9,penanggal,1,Kesanga,1945,
+2024-02-11,9.julungwangi,Redite,Pon,Kajeng,Sri,Sri,Dadi,Suka,5+7,penanggal,2,Kesanga,1945,
+2024-02-12,9.julungwangi,Soma,Wage,Pasah,Laba,Indra,Dangu,Dewa,4+4,penanggal,3,Kesanga,1945,
+2024-02-13,9.julungwangi,Anggara,Keliwon,Beteng,Jaya,Guru,Jangur,Pati,3+8,penanggal,4,Kesanga,1945,anggara-kasih
+2024-02-14,9.julungwangi,Buda,Umanis,Kajeng,Menala,Yama,Gigis,Suka,7+5,penanggal,5,Kesanga,1945,
+2024-02-15,9.julungwangi,Wraspati,Paing,Pasah,Sri,Ludra,Nohan,Raja,8+9,penanggal,6,Kesanga,1945,
+2024-02-16,9.julungwangi,Sukra,Pon,Beteng,Laba,Brahma,Ogan,Duka,6+7,penanggal,7,Kesanga,1945,
+2024-02-17,9.julungwangi,Saniscara,Wage,Kajeng,Jaya,Kala,Erangan,Duka,9+4,penanggal,8,Kesanga,1945,
+2024-02-18,10.sungsang,Redite,Keliwon,Pasah,Menala,Uma,Urungan,Duka,5+8,penanggal,9,Kesanga,1945,
+2024-02-19,10.sungsang,Soma,Umanis,Beteng,Sri,Sri,Tulus,Raksasa,4+5,penanggal,10,Kesanga,1945,
+2024-02-20,10.sungsang,Anggara,Paing,Kajeng,Laba,Indra,Dadi,Suka,3+9,penanggal,11,Kesanga,1945,
+2024-02-21,10.sungsang,Buda,Pon,Pasah,Jaya,Guru,Dangu,Sri,7+7,penanggal,12,Kesanga,1945,
+2024-02-22,10.sungsang,Wraspati,Wage,Beteng,Menala,Yama,Jangur,Suka,8+4,penanggal,13,Kesanga,1945,Sugimanek Jawa
+2024-02-23,10.sungsang,Sukra,Keliwon,Kajeng,Sri,Ludra,Gigis,Sri,6+8,penanggal,14,Kesanga,1945,Sugihan Bali;kajeng-kliwon
+2024-02-24,10.sungsang,Saniscara,Umanis,Pasah,Laba,Brahma,Nohan,Sri,9+5,penanggal,15,Kesanga,1945,purnama
+2024-02-25,11.dunggulan,Redite,Paing,Beteng,Jaya,Kala,Ogan,Sri,5+9,pangelong,1,Kesanga,1945,Hari Penyekeban
+2024-02-26,11.dunggulan,Soma,Pon,Kajeng,Jaya,Kala,Erangan,Pati,4+7,pangelong,2,Kesanga,1945,Penyajaan Galungan
+2024-02-27,11.dunggulan,Anggara,Wage,Pasah,Jaya,Kala,Urungan,Raja,3+4,pangelong,3,Kesanga,1945,Penampahan Galungan
+2024-02-28,11.dunggulan,Buda,Keliwon,Beteng,Menala,Uma,Tulus,Manuh,7+8,pangelong,4,Kesanga,1945,Hari Raya Galungan
+2024-02-29,11.dunggulan,Wraspati,Umanis,Kajeng,Sri,Sri,Dadi,Duka,8+5,pangelong,5,Kesanga,1945,Manis Galungan
+2024-03-01,11.dunggulan,Sukra,Paing,Pasah,Laba,Indra,Dangu,Manuh,6+9,pangelong,6,Kesanga,1945,Sukra Paing Dunggulan
+2024-03-02,11.dunggulan,Saniscara,Pon,Beteng,Jaya,Guru,Jangur,Manusa,9+7,pangelong,7,Kesanga,1945,Pemaridan Guru
+2024-03-03,12.kuningan,Redite,Wage,Kajeng,Menala,Yama,Gigis,Raksasa,5+4,pangelong,8,Kesanga,1945,
+2024-03-04,12.kuningan,Soma,Keliwon,Pasah,Sri,Ludra,Nohan,Suka,4+8,pangelong,9,Kesanga,1945,Pemacekan Agung
+2024-03-05,12.kuningan,Anggara,Umanis,Beteng,Laba,Brahma,Ogan,Dewa,3+5,pangelong,10,Kesanga,1945,
+2024-03-06,12.kuningan,Buda,Paing,Kajeng,Jaya,Kala,Erangan,Manusa,7+9,pangelong,11,Kesanga,1945,
+2024-03-07,12.kuningan,Wraspati,Pon,Pasah,Menala,Uma,Urungan,Manuh,8+7,pangelong,12,Kesanga,1945,
+2024-03-08,12.kuningan,Sukra,Wage,Beteng,Sri,Sri,Tulus,Pandita,6+4,pangelong,13,Kesanga,1945,
+2024-03-09,12.kuningan,Saniscara,Keliwon,Kajeng,Laba,Indra,Dadi,Raja,9+8,pangelong,14,Kesanga,1945,Hari Raya Kuningan;kajeng-kliwon
+2024-03-10,13.langkir,Redite,Umanis,Pasah,Jaya,Guru,Dangu,Pandita,5+5,pangelong,15,Kesanga,1945,tilem
+2024-03-11,13.langkir,Soma,Paing,Beteng,Menala,Yama,Jangur,Duka,4+9,penanggal,1,Kedasa,1946,Hari Raya Nyepi Tahun Baru Saka 1946
+2024-03-12,13.langkir,Anggara,Pon,Kajeng,Sri,Ludra,Gigis,Pandita,3+7,penanggal,2,Kedasa,1946,Ngembak Geni
+2024-03-13,13.langkir,Buda,Wage,Pasah,Laba,Brahma,Nohan,Pati,7+4,penanggal,4,Kedasa,1946,
+2024-03-14,13.langkir,Wraspati,Keliwon,Beteng,Jaya,Kala,Ogan,Manusa,8+8,penanggal,5,Kedasa,1946,
+2024-03-15,13.langkir,Sukra,Umanis,Kajeng,Menala,Uma,Erangan,Pati,6+5,penanggal,6,Kedasa,1946,
+2024-03-16,13.langkir,Saniscara,Paing,Pasah,Sri,Sri,Urungan,Dewa,9+9,penanggal,7,Kedasa,1946,
+2024-03-17,14.medangsia,Redite,Pon,Beteng,Laba,Indra,Tulus,Suka,5+7,penanggal,8,Kedasa,1946,
+2024-03-18,14.medangsia,Soma,Wage,Kajeng,Jaya,Guru,Dadi,Dewa,4+4,penanggal,9,Kedasa,1946,
+2024-03-19,14.medangsia,Anggara,Keliwon,Pasah,Menala,Yama,Dangu,Pati,3+8,penanggal,10,Kedasa,1946,anggara-kasih
+2024-03-20,14.medangsia,Buda,Umanis,Beteng,Sri,Ludra,Jangur,Suka,7+5,penanggal,11,Kedasa,1946,
+2024-03-21,14.medangsia,Wraspati,Paing,Kajeng,Laba,Brahma,Gigis,Raja,8+9,penanggal,12,Kedasa,1946,
+2024-03-22,14.medangsia,Sukra,Pon,Pasah,Jaya,Kala,Nohan,Duka,6+7,penanggal,13,Kedasa,1946,
+2024-03-23,14.medangsia,Saniscara,Wage,Beteng,Menala,Uma,Ogan,Duka,9+4,penanggal,14,Kedasa,1946,
+2024-03-24,15.pujut,Redite,Keliwon,Kajeng,Sri,Sri,Erangan,Duka,5+8,penanggal,15,Kedasa,1946,purnama;kajeng-kliwon
+2024-03-25,15.pujut,Soma,Umanis,Pasah,Laba,Indra,Urungan,Raksasa,4+5,pangelong,1,Kedasa,1946,
+2024-03-26,15.pujut,Anggara,Paing,Beteng,Jaya,Guru,Tulus,Suka,3+9,pangelong,2,Kedasa,1946,
+2024-03-27,15.pujut,Buda,Pon,Kajeng,Menala,Yama,Dadi,Sri,7+7,pangelong,3,Kedasa,1946,
+2024-03-28,15.pujut,Wraspati,Wage,Pasah,Sri,Ludra,Dangu,Suka,8+4,pangelong,4,Kedasa,1946,
+2024-03-29,15.pujut,Sukra,Keliwon,Beteng,Laba,Brahma,Jangur,Sri,6+8,pangelong,5,Kedasa,1946,
+2024-03-30,15.pujut,Saniscara,Umanis,Kajeng,Jaya,Kala,Gigis,Sri,9+5,pangelong,6,Kedasa,1946,
+2024-03-31,16.pahang,Redite,Paing,Pasah,Menala,Uma,Nohan,Sri,5+9,pangelong,7,Kedasa,1946,
+2024-04-01,16.pahang,Soma,Pon,Beteng,Sri,Sri,Ogan,Pati,4+7,pangelong,8,Kedasa,1946,
+2024-04-02,16.pahang,Anggara,Wage,Kajeng,Laba,Indra,Erangan,Raja,3+4,pangelong,9,Kedasa,1946,
+2024-04-03,16.pahang,Buda,Keliwon,Pasah,Jaya,Guru,Urungan,Manuh,7+8,pangelong,10,Kedasa,1946,
+2024-04-04,16.pahang,Wraspati,Umanis,Beteng,Menala,Yama,Tulus,Duka,8+5,pangelong,11,Kedasa,1946,
+2024-04-05,16.pahang,Sukra,Paing,Kajeng,Sri,Ludra,Dadi,Manuh,6+9,pangelong,12,Kedasa,1946,
+2024-04-06,16.pahang,Saniscara,Pon,Pasah,Laba,Brahma,Dangu,Manusa,9+7,pangelong,13,Kedasa,1946,
+2024-04-07,17.krulut,Redite,Wage,Beteng,Jaya,Kala,Jangur,Raksasa,5+4,pangelong,14,Kedasa,1946,
+2024-04-08,17.krulut,Soma,Keliwon,Kajeng,Menala,Uma,Gigis,Suka,4+8,pangelong,15,Kedasa,1946,tilem;kajeng-kliwon
+2024-04-09,17.krulut,Anggara,Umanis,Pasah,Sri,Sri,Nohan,Dewa,3+5,penanggal,1,Jiyestha,1946,
+2024-04-10,17.krulut,Buda,Paing,Beteng,Laba,Indra,Ogan,Manusa,7+9,penanggal,2,Jiyestha,1946,
+2024-04-11,17.krulut,Wraspati,Pon,Kajeng,Jaya,Guru,Erangan,Manuh,8+7,penanggal,3,Jiyestha,1946,
+2024-04-12,17.krulut,Sukra,Wage,Pasah,Menala,Yama,Urungan,Pandita,6+4,penanggal,4,Jiyestha,1946,
+2024-04-13,17.krulut,Saniscara,Keliwon,Beteng,Sri,Ludra,Tulus,Raja,9+8,penanggal,5,Jiyestha,1946,Tumpek Krulut
+2024-04-14,18.merakih,Redite,Umanis,Kajeng,Laba,Brahma,Dadi,Pandita,5+5,penanggal,6,Jiyestha,1946,
+2024-04-15,18.merakih,Soma,Paing,Pasah,Jaya,Kala,Dangu,Duka,4+9,penanggal,7,Jiyestha,1946,
+2024-04-16,18.merakih,Anggara,Pon,Beteng,Menala,Uma,Jangur,Pandita,3+7,penanggal,8,Jiyestha,1946,
+2024-04-17,18.merakih,Buda,Wage,Kajeng,Sri,Sri,Gigis,Pati,7+4,penanggal,9,Jiyestha,1946,
+2024-04-18,18.merakih,Wraspati,Keliwon,Pasah,Laba,Indra,Nohan,Manusa,8+8,penanggal,10,Jiyestha,1946,
+2024-04-19,18.merakih,Sukra,Umanis,Beteng,Jaya,Guru,Ogan,Pati,6+5,penanggal,11,Jiyestha,1946,
+2024-04-20,18.merakih,Saniscara,Paing,Kajeng,Menala,Yama,Erangan,Dewa,9+9,penanggal,12,Jiyestha,1946,
+2024-04-21,19.tambir,Redite,Pon,Pasah,Sri,Ludra,Urungan,Suka,5+7,penanggal,13,Jiyestha,1946,
+2024-04-22,19.tambir,Soma,Wage,Beteng,Laba,Brahma,Tulus,Dewa,4+4,penanggal,14,Jiyestha,1946,
+2024-04-23,19.tambir,Anggara,Keliwon,Kajeng,Jaya,Kala,Dadi,Pati,3+8,penanggal,15,Jiyestha,1946,purnama;anggara-kasih;kajeng-kliwon
+2024-04-24,19.tambir,Buda,Umanis,Pasah,Menala,Uma,Dangu,Suka,7+5,pangelong,1,Jiyestha,1946,
+2024-04-25,19.tambir,Wraspati,Paing,Beteng,Sri,Sri,Jangur,Raja,8+9,pangelong,2,Jiyestha,1946,
+2024-04-26,19.tambir,Sukra,Pon,Kajeng,Laba,Indra,Gigis,Duka,6+7,pangelong,3,Jiyestha,1946,
+2024-04-27,19.tambir,Saniscara,Wage,Pasah,Jaya,Guru,Nohan,Duka,9+4,pangelong,4,Jiyestha,1946,
+2024-04-28,20.medangkungan,Redite,Keliwon,Beteng,Menala,Yama,Ogan,Duka,5+8,pangelong,5,Jiyestha,1946,
+2024-04-29,20.medangkungan,Soma,Umanis,Kajeng,Sri,Ludra,Erangan,Raksasa,4+5,pangelong,6,Jiyestha,1946,
+2024-04-30,20.medangkungan,Anggara,Paing,Pasah,Laba,Brahma,Urungan,Suka,3+9,pangelong,7,Jiyestha,1946,
+2024-05-01,20.medangkungan,Buda,Pon,Beteng,Jaya,Kala,Tulus,Sri,7+7,pangelong,8,Jiyestha,1946,
+2024-05-02,20.medangkungan,Wraspati,Wage,Kajeng,Menala,Uma,Dadi,Suka,8+4,pangelong,9,Jiyestha,1946,
+2024-05-03,20.medangkungan,Sukra,Keliwon,Pasah,Sri,Sri,Dangu,Sri,6+8,pangelong,10,Jiyestha,1946,
+2024-05-04,20.medangkungan,Saniscara,Umanis,Beteng,Laba,Indra,Jangur,Sri,9+5,pangelong,11,Jiyestha,1946,
+2024-05-05,21.matal,Redite,Paing,Kajeng,Jaya,Guru,Gigis,Sri,5+9,pangelong,12,Jiyestha,1946,
+2024-05-06,21.matal,Soma,Pon,Pasah,Menala,Yama,Nohan,Pati,4+7,pangelong,13,Jiyestha,1946,
+2024-05-07,21.matal,Anggara,Wage,Beteng,Sri,Ludra,Ogan,Raja,3+4,pangelong,14,Jiyestha,1946,
+2024-05-08,21.matal,Buda,Keliwon,Kajeng,Laba,Brahma,Erangan,Manuh,7+8,pangelong,15,Jiyestha,1946,tilem;kajeng-kliwon
+2024-05-09,21.matal,Wraspati,Umanis,Pasah,Jaya,Kala,Urungan,Duka,8+5,penanggal,1,Sadha,1946,
+2024-05-10,21.matal,Sukra,Paing,Beteng,Menala,Uma,Tulus,Manuh,6+9,penanggal,2,Sadha,1946,
+2024-05-11,21.matal,Saniscara,Pon,Kajeng,Sri,Sri,Dadi,Manusa,9+7,penanggal,3,Sadha,1946,
+2024-05-12,22.uye,Redite,Wage,Pasah,Laba,Indra,Dangu,Raksasa,5+4,penanggal,4,Sadha,1946,
+2024-05-13,22.uye,Soma,Keliwon,Beteng,Jaya,Guru,Jangur,Suka,4+8,penanggal,5,Sadha,1946,
+2024-05-14,22.uye,Anggara,Umanis,Kajeng,Menala,Yama,Gigis,Dewa,3+5,penanggal,6,Sadha,1946,
+2024-05-15,22.uye,Buda,Paing,Pasah,Sri,Ludra,Nohan,Manusa,7+9,penanggal,8,Sadha,1946,
+2024-05-16,22.uye,Wraspati,Pon,Beteng,Laba,Brahma,Ogan,Manuh,8+7,penanggal,9,Sadha,1946,
+2024-05-17,22.uye,Sukra,Wage,Kajeng,Jaya,Kala,Erangan,Pandita,6+4,penanggal,10,Sadha,1946,
+2024-05-18,22.uye,Saniscara,Keliwon,Pasah,Menala,Uma,Urungan,Raja,9+8,penanggal,11,Sadha,1946,Tumpek Kandang
+2024-05-19,23.menail,Redite,Umanis,Beteng,Sri,Sri,Tulus,Pandita,5+5,penanggal,12,Sadha,1946,
+2024-05-20,23.menail,Soma,Paing,Kajeng,Laba,Indra,Dadi,Duka,4+9,penanggal,13,Sadha,1946,
+2024-05-21,23.menail,Anggara,Pon,Pasah,Jaya,Guru,Dangu,Pandita,3+7,penanggal,14,Sadha,1946,
+2024-05-22,23.menail,Buda,Wage,Beteng,Menala,Yama,Jangur,Pati,7+4,penanggal,15,Sadha,1946,purnama
+2024-05-23,23.menail,Wraspati,Keliwon,Kajeng,Sri,Ludra,Gigis,Manusa,8+8,pangelong,1,Sadha,1946,kajeng-kliwon
+2024-05-24,23.menail,Sukra,Umanis,Pasah,Laba,Brahma,Nohan,Pati,6+5,pangelong,2,Sadha,1946,
+2024-05-25,23.menail,Saniscara,Paing,Beteng,Jaya,Kala,Ogan,Dewa,9+9,pangelong,3,Sadha,1946,
+2024-05-26,24.prangbakat,Redite,Pon,Kajeng,Menala,Uma,Erangan,Suka,5+7,pangelong,4,Sadha,1946,
+2024-05-27,24.prangbakat,Soma,Wage,Pasah,Sri,Sri,Urungan,Dewa,4+4,pangelong,5,Sadha,1946,
+2024-05-28,24.prangbakat,Anggara,Keliwon,Beteng,Laba,Indra,Tulus,Pati,3+8,pangelong,6,Sadha,1946,anggara-kasih
+2024-05-29,24.prangbakat,Buda,Umanis,Kajeng,Jaya,Guru,Dadi,Suka,7+5,pangelong,7,Sadha,1946,
+2024-05-30,24.prangbakat,Wraspati,Paing,Pasah,Menala,Yama,Dangu,Raja,8+9,pangelong,8,Sadha,1946,
+2024-05-31,24.prangbakat,Sukra,Pon,Beteng,Sri,Ludra,Jangur,Duka,6+7,pangelong,9,Sadha,1946,
+2024-06-01,24.prangbakat,Saniscara,Wage,Kajeng,Laba,Brahma,Gigis,Duka,9+4,pangelong,10,Sadha,1946,
+2024-06-02,25.bala,Redite,Keliwon,Pasah,Jaya,Kala,Nohan,Duka,5+8,pangelong,11,Sadha,1946,
+2024-06-03,25.bala,Soma,Umanis,Beteng,Menala,Uma,Ogan,Raksasa,4+5,pangelong,12,Sadha,1946,
+2024-06-04,25.bala,Anggara,Paing,Kajeng,Sri,Sri,Erangan,Suka,3+9,pangelong,13,Sadha,1946,
+2024-06-05,25.bala,Buda,Pon,Pasah,Laba,Indra,Urungan,Sri,7+7,pangelong,14,Sadha,1946,
+2024-06-06,25.bala,Wraspati,Wage,Beteng,Jaya,Guru,Tulus,Suka,8+4,pangelong,15,Sadha,1946,tilem
+2024-06-07,25.bala,Sukra,Keliwon,Kajeng,Menala,Yama,Dadi,Sri,6+8,penanggal,1,Mala Sadha,1946,kajeng-kliwon
+2024-06-08,25.bala,Saniscara,Umanis,Pasah,Sri,Ludra,Dangu,Sri,9+5,penanggal,2,Mala Sadha,1946,
+2024-06-09,26.ugu,Redite,Paing,Beteng,Laba,Brahma,Jangur,Sri,5+9,penanggal,3,Mala Sadha,1946,
+2024-06-10,26.ugu,Soma,Pon,Kajeng,Jaya,Kala,Gigis,Pati,4+7,penanggal,4,Mala Sadha,1946,
+2024-06-11,26.ugu,Anggara,Wage,Pasah,Menala,Uma,Nohan,Raja,3+4,penanggal,5,Mala Sadha,1946,
+2024-06-12,26.ugu,Buda,Keliwon,Beteng,Sri,Sri,Ogan,Manuh,7+8,penanggal,6,Mala Sadha,1946,
+2024-06-13,26.ugu,Wraspati,Umanis,Kajeng,Laba,Indra,Erangan,Duka,8+5,penanggal,7,Mala Sadha,1946,
+2024-06-14,26.ugu,Sukra,Paing,Pasah,Jaya,Guru,Urungan,Manuh,6+9,penanggal,8,Mala Sadha,1946,
+2024-06-15,26.ugu,Saniscara,Pon,Beteng,Menala,Yama,Tulus,Manusa,9+7,penanggal,9,Mala Sadha,1946,
+2024-06-16,27.wayang,Redite,Wage,Kajeng,Sri,Ludra,Dadi,Raksasa,5+4,penanggal,10,Mala Sadha,1946,
+2024-06-17,27.wayang,Soma,Keliwon,Pasah,Laba,Brahma,Dangu,Suka,4+8,penanggal,11,Mala Sadha,1946,
+2024-06-18,27.wayang,Anggara,Umanis,Beteng,Jaya,Kala,Jangur,Dewa,3+5,penanggal,12,Mala Sadha,1946,
+2024-06-19,27.wayang,Buda,Paing,Kajeng,Menala,Uma,Gigis,Manusa,7+9,penanggal,13,Mala Sadha,1946,
+2024-06-20,27.wayang,Wraspati,Pon,Pasah,Sri,Sri,Nohan,Manuh,8+7,penanggal,14,Mala Sadha,1946,
+2024-06-21,27.wayang,Sukra,Wage,Beteng,Laba,Indra,Ogan,Pandita,6+4,penanggal,15,Mala Sadha,1946,purnama
+2024-06-22,27.wayang,Saniscara,Keliwon,Kajeng,Jaya,Guru,Erangan,Raja,9+8,pangelong,1,Mala Sadha,1946,Tumpek Wayang;kajeng-kliwon
+2024-06-23,28.kulawu,Redite,Umanis,Pasah,Menala,Yama,Urungan,Pandita,5+5,pangelong,2,Mala Sadha,1946,
+2024-06-24,28.kulawu,Soma,Paing,Beteng,Sri,Ludra,Tulus,Duka,4+9,pangelong,3,Mala Sadha,1946,
+2024-06-25,28.kulawu,Anggara,Pon,Kajeng,Laba,Brahma,Dadi,Pandita,3+7,pangelong,4,Mala Sadha,1946,
+2024-06-26,28.kulawu,Buda,Wage,Pasah,Jaya,Kala,Dangu,Pati,7+4,pangelong,5,Mala Sadha,1946,
+2024-06-27,28.kulawu,Wraspati,Keliwon,Beteng,Menala,Uma,Jangur,Manusa,8+8,pangelong,6,Mala Sadha,1946,
+2024-06-28,28.kulawu,Sukra,Umanis,Kajeng,Sri,Sri,Gigis,Pati,6+5,pangelong,7,Mala Sadha,1946,
+2024-06-29,28.kulawu,Saniscara,Paing,Pasah,Laba,Indra,Nohan,Dewa,9+9,pangelong,8,Mala Sadha,1946,
+2024-06-30,29.dukut,Redite,Pon,Beteng,Jaya,Guru,Ogan,Suka,5+7,pangelong,9,Mala Sadha,1946,
