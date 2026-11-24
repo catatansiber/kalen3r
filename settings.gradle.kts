@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "kalen3r"
 include(":calendar-core")
+include(":app")

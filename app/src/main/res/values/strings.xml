@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kalender Bali</string>
+    <string name="tab_kalender">Kalender</string>
+    <string name="tab_cari">Cari</string>
+    <string name="tab_alarm">Alarm</string>
+    <string name="tab_donasi">Donasi</string>
+    <string name="title_detail">Detail Hari</string>
+    <string name="placeholder_kalender">Kalender</string>
+    <string name="placeholder_cari">Cari Hari Baik</string>
+    <string name="placeholder_alarm">Alarm Hari Raya</string>
+    <string name="placeholder_donasi">Dukung Aplikasi Ini</string>
+    <string name="back">Kembali</string>
+</resources>
