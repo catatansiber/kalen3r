@@ -1,0 +1,12 @@
+.superpowers/
+.gradle/
+build/
+node_modules/
+local.properties
+*.iml
+.idea/
+.kotlin/
+*.apk
+*.aab
+*.jks
+*.keystore
