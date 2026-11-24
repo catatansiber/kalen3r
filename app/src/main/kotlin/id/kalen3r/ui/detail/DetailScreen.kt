@@ -37,6 +37,7 @@ import id.kalen3r.CalendarProvider
 import id.kalen3r.R
 import id.kalen3r.core.BaliDay
 import id.kalen3r.core.RerainanKind
+import id.kalen3r.core.TithiType
 import id.kalen3r.core.Triwara
 import id.kalen3r.core.Pawukon
 import id.kalen3r.ui.KalenColors
@@ -142,13 +143,32 @@ private fun WewaranGrid(day: BaliDay) {
             Triwara.KAJENG -> R.string.triwara_kajeng
         },
     )
+    val tithi = DetailFormat.tithi(day)
+    val tithiBase = stringResource(
+        if (tithi.type == TithiType.PENANGGAL) R.string.tithi_penanggal else R.string.tithi_pangelong,
+        tithi.number,
+    )
+    val tithiText = when (tithi.special) {
+        TithiSpecial.PURNAMA -> stringResource(R.string.tithi_with_special, tithiBase, stringResource(R.string.marker_purnama))
+        TithiSpecial.TILEM -> stringResource(R.string.tithi_with_special, tithiBase, stringResource(R.string.marker_tilem))
+        null -> tithiBase
+    }
     val items = listOf(
-        stringResource(R.string.wewaran_wuku) to Pawukon.WUKU_NAMES[day.wuku - 1],
-        stringResource(R.string.wewaran_saptawara) to MonthFormat.saptawaraName(day.saptawara),
-        stringResource(R.string.wewaran_pancawara) to MonthFormat.pancawaraName(day.pancawara),
+        stringResource(R.string.wewaran_ekawara) to DetailFormat.ekawara(day),
+        stringResource(R.string.wewaran_dwiwara) to DetailFormat.dwiwara(day),
         stringResource(R.string.wewaran_triwara) to triwara,
+        stringResource(R.string.wewaran_caturwara) to DetailFormat.caturwara(day),
+        stringResource(R.string.wewaran_pancawara) to MonthFormat.pancawaraName(day.pancawara),
+        stringResource(R.string.wewaran_sadwara) to DetailFormat.sadwara(day),
+        stringResource(R.string.wewaran_saptawara) to MonthFormat.saptawaraName(day.saptawara),
+        stringResource(R.string.wewaran_astawara) to DetailFormat.astawara(day),
+        stringResource(R.string.wewaran_sangawara) to DetailFormat.sangawara(day),
+        stringResource(R.string.wewaran_dasawara) to DetailFormat.dasawara(day),
+        stringResource(R.string.wewaran_wuku) to Pawukon.WUKU_NAMES[day.wuku - 1],
+        stringResource(R.string.wewaran_urip) to DetailFormat.urip(day),
         stringResource(R.string.wewaran_sasih) to sasih,
         stringResource(R.string.wewaran_caka) to day.cakaYear.toString(),
+        stringResource(R.string.wewaran_tithi) to tithiText,
     )
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         items.chunked(2).forEach { row ->
