@@ -86,6 +86,24 @@ astronomis (fase bulan, waktu WITA) lalu dicek dengan tanggal resmi;
   `donasi_50k`, `donasi_100k`; tombol "terima kasih" setelah berhasil.
 - Tes: tes unit pada `:calendar-core` dengan data emas.
 
+## Keputusan tambahan dari builder check (pilihan builder)
+
+- Jangkauan: tes emas 2024–2035. Navigasi 2000–2100; di luar tahun
+  terverifikasi tampil peringatan kecil "hitungan belum diverifikasi".
+- Aturan Sasih/Çaka/nampih/ngunalatri: ikut kalender resmi Parisada;
+  ujian lulus = cocok dengan tanggal terbit resmi pada data emas.
+- Jangkar Pawukon: diturunkan dari data emas lalu dicek silang.
+- Rainan yang bisa dialarm: Purnama, Tilem, Kajeng Kliwon, Anggara Kasih,
+  Buda Cemeng, dan hari raya besar. Alarm Rainan jam 06:00 (bisa diubah).
+  Jadwal bergulir 60 hari ke depan, dijadwal ulang tiap app dibuka dan saat boot.
+- "Andal di Oppo/Xiaomi" = layar bantuan di app. Uji di HP sungguhan
+  dikerjakan pemilik sebelum rilis.
+- Android SDK: builder coba pasang di sandbox. Jika gagal, kode ditulis dan
+  modul `:calendar-core` dites penuh; build `:app` dan uji HP oleh pemilik.
+- Izin alarm: `USE_EXACT_ALARM` (aplikasi kalender), cadangan
+  `SCHEDULE_EXACT_ALARM`. ID produk donasi tetap; harga bisa diubah di Play Console.
+- Bahasa: Indonesia saja, string disimpan di resource agar mudah ditambah.
+
 ## Diserahkan ke builder
 
 Nama paket final, ikon, warna, tata letak detail, daftar lengkap hari raya
